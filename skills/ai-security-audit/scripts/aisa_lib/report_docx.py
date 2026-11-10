@@ -478,6 +478,25 @@ def build(run: Path, out_path: Path, framework: str | None = None) -> Path:
             _row(t, [tool, r.get("version") or "-", r.get("purpose", ""), status], colors=[None, None, None, col])
         _para(doc, "", after=4)
 
+    # cost and speed (B6): engine phases only; tokens are estimates (chars / 4)
+    costs = meta.get("phase_costs") or []
+    if costs:
+        _heading(doc, f"{n}.4 Cost and speed", 2)
+        _para(doc, "Engine phases only. Token figures are estimates (characters read / 4) of what the "
+                   "tool itself read; they are not LLM billing and exclude the reasoning passes.",
+              9.5, italic=True, after=4)
+        t = _table(doc, [2600, 1700, 2100, 2960])
+        _row(t, ["Phase", "Time (s)", "Files read", "Est. tokens"], header=True)
+        tot_s = tot_f = tot_t = 0
+        for c in costs:
+            _row(t, [str(c.get("phase", "")), str(c.get("seconds", "")),
+                     str(c.get("files_read", "")), f"~{c.get('est_tokens', '')}"])
+            tot_s += c.get("seconds", 0) or 0
+            tot_f += c.get("files_read", 0) or 0
+            tot_t += c.get("est_tokens", 0) or 0
+        _row(t, ["Total (engine)", f"{round(tot_s, 2)}", str(tot_f), f"~{tot_t}"], bold=True)
+        _para(doc, "", after=4)
+
     # 3. detailed findings
     H("Detailed Findings")
     if is_dpdp:
