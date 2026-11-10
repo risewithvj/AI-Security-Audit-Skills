@@ -1,6 +1,6 @@
 {
   "name": "ai-security-audit-skills",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Proof-backed AI security audit and DPDP Act skills for Claude Code. Source-code VAPT with zero unproven findings, recommendations only, never touches your code.",
   "author": {
     "name": "Vijaya Kumar L (Rise With VJ)",
