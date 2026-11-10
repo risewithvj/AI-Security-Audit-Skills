@@ -284,11 +284,29 @@ def rel(root: Path, path: Path | str) -> str:
         return Path(str(path)).as_posix()
 
 
+# --- Cost accounting (B6): tally files and characters the engine actually reads ---
+_IO = {"files": 0, "chars": 0}
+
+
+def io_reset() -> None:
+    _IO["files"] = 0
+    _IO["chars"] = 0
+
+
+def io_snapshot() -> dict:
+    """Current (files_read, chars_read) and an estimated-token figure (chars / 4)."""
+    return {"files_read": _IO["files"], "chars_read": _IO["chars"],
+            "est_tokens": _IO["chars"] // 4}
+
+
 def read_text(path: Path) -> str:
     try:
-        return path.read_text(encoding="utf-8", errors="replace")
+        text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return ""
+    _IO["files"] += 1
+    _IO["chars"] += len(text)
+    return text
 
 
 # --- Secret detection and redaction -----------------------------------------
