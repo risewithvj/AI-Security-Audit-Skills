@@ -323,6 +323,22 @@ Every confirmed finding carries machine-checked `file:line` evidence re-read fro
 
 ---
 
+## 🌐 Web AI benchmark
+
+The same **God Mode** web prompt, run by different chat AIs on the OWASP Juice Shop zip, scored with `aisa.py benchmark` against the 60-challenge source-visible answer key (exact-id mode: distinct challenges each AI clearly identified, no sibling inflation). Measured **2026-11-11**.
+
+| AI (model) | Prompt | Run | Matched / 60 | False positives | Challenges only this AI found |
+|---|---|---|---|---|---|
+| ChatGPT (GPT-6 High) | God Mode | finished, 22 min, 2 nudges | **20** | 0 | chatbot greedy prompt-injection; local file read (XML); b2b RCE "occupy" |
+| Codex (GPT-6.1 Sol Medium) | softer defensive | finished, 18 min, many nudges | **23** | 0 | passkey credential overwrite; passkey signature bypass; RESTful/stored XSS |
+| Claude.ai (Sonnet 5.5) | God Mode | partial — 5 min, ~31% of session | **26** | 0 | DB-schema via UNION SQLi; leaked key in Terraform IaC; reset-password rate-limit bypass; weak crypto |
+| Gemini Pro | God Mode, then softer | refused God Mode; softer prompt couldn't read the zip | — | — | — |
+| **Combined (union)** | — | — | **33** | **0** | — |
+
+Notes: **zero false positives** across all three — every reported item was a real, source-traced vulnerability (some fell outside the 60 labels and were simply not counted, never penalised). The runs are **not** a clean model-vs-model comparison: the models, prompts and stop points differ, and Claude's 26 came from a **partial** run that was still ahead when it stopped, while ChatGPT and Codex ran to completion. For reference, the CLI engine scores **52 / 60, 0% FP** on the same key.
+
+---
+
 ## ⏱️ Cost and speed
 
 v1.5 spends fewer tokens for the **same** detection. Four levers, all on by default:
