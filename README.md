@@ -337,6 +337,8 @@ The same **God Mode** web prompt, run by different chat AIs on the OWASP Juice S
 
 Notes: **zero false positives** across all three — every reported item was a real, source-traced vulnerability (some fell outside the 60 labels and were simply not counted, never penalised). The runs are **not** a clean model-vs-model comparison: the models, prompts and stop points differ, and Claude's 26 came from a **partial** run that was still ahead when it stopped, while ChatGPT and Codex ran to completion. For reference, the CLI engine scores **52 / 60, 0% FP** on the same key.
 
+**➡️ Full scorecard** — per-challenge matrix (all 60), found-only-by lists, and the 27 challenges no web AI found: [juice-shop-web-ai.html](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/juice-shop-web-ai.html).
+
 ---
 
 ## ⏱️ Cost and speed
