@@ -338,9 +338,11 @@ Measured on **OWASP Juice Shop** (source-only, v1.5 defaults, 2026-11-11):
 |---|---|
 | Auto profile chosen | **standard** (1,459 source files; jwt, llm, uploads signals) |
 | Detection | **52 / 60 (87%)**, **0% false positives** — unchanged from v1.4 |
-| Engine phase cost (read + estimate, not LLM billing) | init ≈ 23 s / ~0.96 M est-tokens · validate ≈ 0.5 s / ~0.13 M · PII inventory ≈ 62 s / ~5.2 M |
+| Engine I/O (chars/4), per phase | init ≈ 23 s / ~0.96 M · validate ≈ 0.5 s / ~0.13 M · PII inventory ≈ 62 s / ~5.2 M |
 
-Each run prints a `cost:` line per phase (time, files read, estimated tokens = characters / 4) and the report carries a **Cost and speed** table. Detection is carried forward from the v1.4 six-phase audit and re-scored with the v1.5 engine; the lean defaults reduce effort on low-risk code and defer unflagged files to **Not checked**, they do not drop coverage of risk. A fresh end-to-end lean audit was not re-run this cycle.
+Each run prints a `cost:` line per phase (time, files read, engine I/O = characters read / 4) and the report carries a **Cost and speed** table. **Engine I/O is not AI token use** — it only counts what the Python engine read. AI token use isn't measured by the engine; check `/cost` in Claude Code after a run.
+
+To be clear about the number: the **52/60 was re-scored, not re-run**. The six-phase hunt was run under v1.4; v1.5 re-scores those same confirmed findings with the improved engine and measures the engine-phase costs above. The lean defaults reduce effort on low-risk code and defer unflagged files to **Not checked**; they do not drop coverage of risk. A fresh end-to-end audit under the v1.5 defaults was not run this cycle.
 
 ---
 
