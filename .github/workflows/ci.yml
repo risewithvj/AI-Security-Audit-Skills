@@ -189,3 +189,6 @@ jobs:
           assert not missing, f"web engine missed planted issues: {missing}"
           print("web engine found all planted issues:", sorted(ids & need))
           EOF
+      - name: Validate the web prompt catalogue
+        run: |
+          python .github/scripts/validate_prompts.py
