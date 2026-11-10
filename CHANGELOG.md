@@ -8,6 +8,15 @@
 
 # Changelog
 
+## 1.5.0 (2026-11-11)
+
+A tiered web prompt system and a leaner CLI that spends fewer tokens for the same detection.
+
+- **Web prompt system (MODE × TYPE).** The runbook is reorganised around `MODE` (`lite` top-risks/one-page, `pro` full audit with auto-DPDP, `god` = pro plus a self-refutation pass, exploit chains, attack narrative, priority roadmap and continue-from-where-you-stopped) and `TYPE` (`auto, webapp, api, wordpress, appsscript, mobile, ai-app, extension, ecommerce, baas, dpdp`). Security and DPDP run in one prompt. A **client-side tampering phase** runs in every mode (prices/roles/limits from JS, console-callable hidden APIs, bundle secrets, editable ids, loopable OTP/coupon endpoints, `google.script.run`), every finding needing server-side proof. Reports always carry Vulnerabilities / Hardening notes / Not checked, a fixed Rise With VJ footer, and a Prepared-by line.
+- **Landing page + catalogue.** A 3-question picker builds one copy-ready prompt; a `docs/web/v1/prompts.json` catalogue holds every TYPE × MODE plus an all-in-one God Mode prompt; tiered `paste-prompt-lite/pro/god.txt` fallbacks for link-less AIs. CI validates the catalogue (every TYPE has all three modes; every linked file exists). A manual `tests/web-benchmark.md` sheet scores the God Mode prompt across ChatGPT/Gemini/Claude.ai/Codex.
+- **Lean CLI.** `init` defaults to `--profile auto` (sizes the run from the stack; prints the choice and reason); `--budget small|normal|large` caps hunters and waves; verification is **risk-based** (3 votes for High/Critical, 1 for Medium/Low, re-vote on disagreement); hunters read **scanners-first** (only files flagged by scanners, the risk map or a checklist trigger — the rest go to Not checked); a DPDP run **reuses** a prior security run's architecture map and PII inventory. Every phase prints a `cost:` line (time, files read, estimated tokens) and the report carries a Cost-and-speed table.
+- **Measured on Juice Shop (v1.5 defaults):** auto profile = standard; detection **52/60 (87%), 0% false positives** — unchanged from v1.4; the lean defaults cut effort on low-risk code, not coverage.
+
 ## 1.4.0 (2026-11-11)
 
 Originality pass, a no-install web version, honest benchmark scoring, and broader coverage.
