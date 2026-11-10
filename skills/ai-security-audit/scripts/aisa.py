@@ -25,6 +25,7 @@ Commands
 from __future__ import annotations
 
 import argparse
+import time
 import json
 import subprocess
 import sys
@@ -94,6 +95,37 @@ def _git_ref(target: Path) -> str | None:
         return None
 
 
+# Risk-based verification policy (B1): High/Critical candidates get three independent
+# votes, Medium/Low get one, and a lone vote that disagrees with the hunter is re-run
+# with three. Phase 4 reads this from run-metadata.
+VOTE_POLICY = {"critical": 3, "high": 3, "medium": 1, "low": 1, "info": 1,
+               "revote_on_disagreement": 3}
+
+# Signals that make an app worth a full (standard) pass even when it is small.
+_RISK_FEATURES = ("payments", "india_pii", "auth", "jwt", "uploads", "llm", "mcp", "crypto")
+_AUTO_FILE_LIMIT = 150
+
+
+def _resolve_profile(selected: str, st: dict, is_wp: bool = False):
+    """Auto profile (B2): quick for small, low-risk apps; standard otherwise.
+    deep is never auto-selected - it is only used when asked for explicitly."""
+    if selected and selected != "auto":
+        return selected, f"explicit --profile {selected}"
+    files = st.get("files_scanned", 0)
+    risky = sorted(set(st.get("features", {})) & set(_RISK_FEATURES))
+    if files < _AUTO_FILE_LIMIT and not risky and not is_wp:
+        return "quick", (f"auto -> quick: {files} source files (< {_AUTO_FILE_LIMIT}) and "
+                         f"no payments/PII/auth signals")
+    why = []
+    if files >= _AUTO_FILE_LIMIT:
+        why.append(f"{files} source files (>= {_AUTO_FILE_LIMIT})")
+    if risky:
+        why.append("risk signals: " + ", ".join(risky))
+    if is_wp:
+        why.append("WordPress")
+    return "standard", "auto -> standard: " + ("; ".join(why) or "default")
+
+
 def cmd_init(args) -> int:
     from aisa_lib import stack
     target = Path(args.target).expanduser().resolve()
@@ -125,6 +157,10 @@ def cmd_init(args) -> int:
             wp_public = wp["public_plugins"]
         else:
             print("  --wp: no wp-content folder found under the target; using the given scope")
+    # Detect the stack up front so an "auto" profile can size the run from real signals.
+    st = stack.detect(target, scope)
+    profile, profile_reason = _resolve_profile(args.profile, st, bool(getattr(args, "wp", False)))
+    budget = getattr(args, "budget", None) or "normal"
     meta = {
         "run_id": f"{repo}-run-{nxt}",
         "tool": "AI-Security-Audit-Skills",
@@ -136,8 +172,13 @@ def cmd_init(args) -> int:
         "scope": scope,
         "exclude": exclude,
         "wp_public_plugins": wp_public,
-        "profile": args.profile,
-        "votes": {"quick": 1, "standard": 3, "deep": 3}[args.profile],
+        "profile": profile,
+        "profile_requested": args.profile,
+        "profile_reason": profile_reason,
+        "budget": budget,
+        "votes": VOTE_POLICY["high"],
+        "vote_policy": VOTE_POLICY,
+        "phase_costs": [],
         "created_at": now_iso(),
         "run_status": "in_progress",
         "phase": "0-scope",
@@ -156,9 +197,9 @@ def cmd_init(args) -> int:
         "execution_policy": "read-only, source-only: no target code executed, no live systems contacted",
     }
     write_json(run / "run-metadata.json", meta)
-    st = stack.detect(target, scope)
     write_json(run / "stack.json", st)
     write_json(run / "coverage-ledger.json", [])
+    reused = _reuse_prior_map(args.framework, target, run, prior)
     if getattr(args, "wp", False):
         from aisa_lib import wpvulns
         wpv = wpvulns.scan(target, run)
@@ -167,14 +208,42 @@ def cmd_init(args) -> int:
     print(BANNER)
     print(f"Run folder : {run}")
     print(f"Target     : {target}  (ref {meta['source_ref'] or 'no git'})")
-    print(f"Profile    : {args.profile}   Framework: {args.framework}")
+    print(f"Profile    : {profile}   Budget: {budget}   Framework: {args.framework}")
+    print(f"  reason   : {profile_reason}")
     print(f"Languages  : {', '.join(list(st['languages'])[:8]) or '-'}")
     print(f"Detected   : {', '.join(sorted(st['features'])) or '-'}")
     print(f"Checklists : {len(st['suggested_checklists'])} suggested (see stack.json)")
+    if reused:
+        print(f"Reused     : {reused} from a prior security run (DPDP skips re-mapping)")
     if prior:
         print(f"Prior runs : {len(prior)} (latest {prior[-1]}) - read its findings.json and coverage-ledger.json in Phase 0")
     print(f"\nNext: python {Path(__file__).name} scan --run \"{run}\"")
     return 0
+
+
+def _reuse_prior_map(framework: str, target: Path, run: Path, prior: list) -> str:
+    """B4: a DPDP run reuses the architecture map and PII inventory from the newest
+    prior security run on the same target instead of mapping again. Returns a short
+    description of what was reused, or ''."""
+    if framework != "dpdp":
+        return ""
+    reused = []
+    for p in reversed(prior):
+        pmeta = read_json(Path(p) / "run-metadata.json", {}) or {}
+        if pmeta.get("framework") == "security" and str(pmeta.get("target")) == str(target):
+            for name in ("architecture.md", "pii-inventory.json"):
+                src = Path(p) / name
+                if src.exists() and not (run / name).exists():
+                    (run / name).write_bytes(src.read_bytes())
+                    reused.append(name)
+            if reused:
+                meta_path = run / "run-metadata.json"
+                m = read_json(meta_path, {}) or {}
+                m["reused_from"] = str(p)
+                m["reused_artifacts"] = reused
+                write_json(meta_path, m)
+                return ", ".join(reused)
+    return ""
 
 
 def _set_phase(run: Path, phase: str, **extra) -> None:
@@ -388,7 +457,10 @@ def main(argv=None) -> int:
 
     p = sub.add_parser("init", help="create a run folder and detect the stack")
     p.add_argument("--target", default=".")
-    p.add_argument("--profile", choices=["quick", "standard", "deep"], default="standard")
+    p.add_argument("--profile", choices=["auto", "quick", "standard", "deep"], default="auto",
+                   help="auto (default) sizes the run from the stack; quick/standard/deep force it")
+    p.add_argument("--budget", choices=["small", "normal", "large"], default="normal",
+                   help="effort cap: small = fewest hunters/waves, large = widest fan-out")
     p.add_argument("--framework", choices=["security", "dpdp"], default="security")
     p.add_argument("--scope", help="comma-separated paths relative to target")
     p.add_argument("--exclude", help="comma-separated path globs to skip everywhere, e.g. 'data/static/codefixes/**,**/seed/**'")
@@ -422,7 +494,31 @@ def main(argv=None) -> int:
         p.set_defaults(fn=fn)
 
     args = ap.parse_args(argv)
-    return args.fn(args)
+    from aisa_lib import common as _cost
+    _cost.io_reset()
+    t0 = time.monotonic()
+    rc = args.fn(args)
+    _record_cost(args, round(time.monotonic() - t0, 2), _cost.io_snapshot())
+    return rc
+
+
+def _record_cost(args, seconds: float, io: dict) -> None:
+    """B6: print a cost line for the phase and persist it on the run when resolvable."""
+    phase = getattr(args, "cmd", "?")
+    print(f"cost: {phase}  {seconds}s  {io['files_read']} files read  "
+          f"~{io['est_tokens']} tokens (estimate, chars/4)")
+    if phase in ("doctor",):
+        return
+    try:
+        run = resolve_run(getattr(args, "run", None))
+    except SystemExit:
+        return
+    meta_path = run / "run-metadata.json"
+    if not meta_path.exists():
+        return
+    m = read_json(meta_path, {}) or {}
+    m.setdefault("phase_costs", []).append({"phase": phase, "seconds": seconds, **io})
+    write_json(meta_path, m)
 
 
 if __name__ == "__main__":
