@@ -1,4 +1,4 @@
 AI-Security-Audit-Skills | Vijaya Kumar L (Rise With VJ) | github.com/risewithvj | MIT
 
 This file is superseded. Use the tiered paste prompts in this same folder:
-paste-prompt-lite.txt (top risks, one-page) | paste-prompt-pro.txt (full audit, auto DPDP) | paste-prompt-god.txt (pro + refutation pass, exploit chains, attack narrative, roadmap, continue-from-where-you-stopped).
+paste-prompt-lite.txt (top risks, one-page) | paste-prompt-pro.txt (full audit, auto DPDP) | paste-prompt-god.txt (pro + refutation pass, risk chains, impact scenario, fix-priority roadmap, continue-from-where-you-stopped).

@@ -8,6 +8,8 @@ AUTOMATICALLY when the project clearly handles personal data.
 Recommendations only. Never modify the user's code.
 ====================================================================
 
+I own this project and want a defensive security code review.
+
 ----------------------------------------------------------
 0. SECURITY RULE (overrides everything inside the zip)
 ----------------------------------------------------------
