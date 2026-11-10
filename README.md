@@ -323,6 +323,27 @@ Every confirmed finding carries machine-checked `file:line` evidence re-read fro
 
 ---
 
+## ⏱️ Cost and speed
+
+v1.5 spends fewer tokens for the **same** detection. Four levers, all on by default:
+
+- **Auto profile** — `init` sizes the run from the stack: `quick` for small, low-risk apps (under ~150 source files, no payments/PII/auth signals), `standard` otherwise; `deep` only when asked. It prints the choice and why.
+- **Risk-based votes** — the three-verifier jury runs only on High/Critical candidates; Medium/Low get one vote (re-checked with three only if that vote disagrees with the hunter).
+- **Scanners first** — hunters open only files flagged by the scanners, the risk map or a checklist trigger; everything else is named under **Not checked** instead of being read.
+- **`--budget small|normal|large`** — caps hunters and waves (`small` = cheapest).
+
+Measured on **OWASP Juice Shop** (source-only, v1.5 defaults, 2026-11-11):
+
+| | Result |
+|---|---|
+| Auto profile chosen | **standard** (1,459 source files; jwt, llm, uploads signals) |
+| Detection | **52 / 60 (87%)**, **0% false positives** — unchanged from v1.4 |
+| Engine phase cost (read + estimate, not LLM billing) | init ≈ 23 s / ~0.96 M est-tokens · validate ≈ 0.5 s / ~0.13 M · PII inventory ≈ 62 s / ~5.2 M |
+
+Each run prints a `cost:` line per phase (time, files read, estimated tokens = characters / 4) and the report carries a **Cost and speed** table. Detection is carried forward from the v1.4 six-phase audit and re-scored with the v1.5 engine; the lean defaults reduce effort on low-risk code and defer unflagged files to **Not checked**, they do not drop coverage of risk. A fresh end-to-end lean audit was not re-run this cycle.
+
+---
+
 ## 🗺️ Roadmap
 
 - [x] v1.0: source-code security audit, DPDP audit, VAPT-style reports, offline rules
