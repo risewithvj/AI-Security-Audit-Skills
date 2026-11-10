@@ -491,6 +491,74 @@ class EngineTests(unittest.TestCase):
         finally:
             common.set_global_exclude([])
 
+    def test_auto_profile_resolution(self):
+        import aisa
+        # small + no risk signals -> quick
+        p, why = aisa._resolve_profile("auto", {"files_scanned": 20, "features": {"express": []}})
+        self.assertEqual(p, "quick")
+        self.assertIn("quick", why)
+        # risk signal pulls it up to standard even when small
+        p, _ = aisa._resolve_profile("auto", {"files_scanned": 20, "features": {"payments": []}})
+        self.assertEqual(p, "standard")
+        # large app -> standard; auto never picks deep
+        p, _ = aisa._resolve_profile("auto", {"files_scanned": 900, "features": {}})
+        self.assertEqual(p, "standard")
+        # explicit profile is respected verbatim
+        p, why = aisa._resolve_profile("deep", {"files_scanned": 5, "features": {}})
+        self.assertEqual(p, "deep")
+        self.assertIn("explicit", why)
+
+    def test_vote_policy_is_risk_based(self):
+        import aisa
+        self.assertEqual(aisa.VOTE_POLICY["critical"], 3)
+        self.assertEqual(aisa.VOTE_POLICY["high"], 3)
+        self.assertEqual(aisa.VOTE_POLICY["medium"], 1)
+        self.assertEqual(aisa.VOTE_POLICY["low"], 1)
+        self.assertEqual(aisa.VOTE_POLICY["revote_on_disagreement"], 3)
+
+    def test_cost_counters(self):
+        from aisa_lib import common
+        work = Path(tempfile.mkdtemp(prefix="aisa-cost-"))
+        (work / "a.txt").write_text("x" * 400, encoding="utf-8")
+        common.io_reset()
+        common.read_text(work / "a.txt")
+        snap = common.io_snapshot()
+        self.assertEqual(snap["files_read"], 1)
+        self.assertEqual(snap["chars_read"], 400)
+        self.assertEqual(snap["est_tokens"], 100)  # chars / 4
+
+    def test_init_records_budget_votepolicy_and_cost(self):
+        work = Path(tempfile.mkdtemp(prefix="aisa-b5-"))
+        reports = Path(tempfile.mkdtemp(prefix="aisa-b5-rep-"))
+        env = dict(os.environ, AISA_REPORTS_DIR=str(reports))
+        (work / "app.py").write_text("print('hi')\n", encoding="utf-8")
+        r = aisa("init", "--target", str(work), "--budget", "small", env=env)
+        self.assertEqual(r.returncode, 0, r.stderr + r.stdout)
+        self.assertIn("cost: init", r.stdout)
+        meta = json.loads((reports / work.name / "run-1" / "run-metadata.json").read_text())
+        self.assertEqual(meta["budget"], "small")
+        self.assertEqual(meta["profile_requested"], "auto")
+        self.assertEqual(meta["vote_policy"]["high"], 3)
+        self.assertTrue(meta["phase_costs"] and meta["phase_costs"][0]["phase"] == "init")
+
+    def test_dpdp_reuses_prior_security_map(self):
+        work = Path(tempfile.mkdtemp(prefix="aisa-b4-"))
+        reports = Path(tempfile.mkdtemp(prefix="aisa-b4-rep-"))
+        env = dict(os.environ, AISA_REPORTS_DIR=str(reports))
+        (work / "app.py").write_text("print('hi')\n", encoding="utf-8")
+        r1 = aisa("init", "--target", str(work), env=env)
+        self.assertEqual(r1.returncode, 0, r1.stderr + r1.stdout)
+        secrun = reports / work.name / "run-1"
+        (secrun / "architecture.md").write_text("# map\n", encoding="utf-8")
+        (secrun / "pii-inventory.json").write_text('{"fields": []}', encoding="utf-8")
+        r2 = aisa("init", "--target", str(work), "--framework", "dpdp", env=env)
+        self.assertEqual(r2.returncode, 0, r2.stderr + r2.stdout)
+        dprun = reports / work.name / "run-2"
+        self.assertTrue((dprun / "architecture.md").exists())
+        self.assertTrue((dprun / "pii-inventory.json").exists())
+        meta = json.loads((dprun / "run-metadata.json").read_text())
+        self.assertEqual(set(meta.get("reused_artifacts", [])), {"architecture.md", "pii-inventory.json"})
+
     def test_wp_profile_init(self):
         work = Path(tempfile.mkdtemp(prefix="aisa-wp-prof-"))
         reports = Path(tempfile.mkdtemp(prefix="aisa-wp-rep-"))
