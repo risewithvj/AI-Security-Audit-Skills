@@ -49,17 +49,20 @@ Resolve these before Phase 0. Use `python` on Windows and `python3` on macOS/Lin
 
 ```
 python <skill dir>/scripts/aisa.py doctor
-python <skill dir>/scripts/aisa.py init --target "<target>" --profile standard
+python <skill dir>/scripts/aisa.py init --target "<target>"
 ```
 
 `doctor` shows which scanners are installed. Missing scanners do not block the audit; they are listed under "Not checked" in the report. Offer the install command `doctor` prints, but never install anything without the user saying yes.
 
 ## Profiles
 
+`init` defaults to `--profile auto`: it sizes the run from the detected stack (`quick` for small, low-risk apps under ~150 source files with no payments/PII/auth signals; `standard` otherwise) and prints the choice and the reason. Force it with `--profile quick|standard|deep`, and cap effort with `--budget small|normal|large` (`small` = fewest hunters and waves). Verification is **risk-based**: High/Critical candidates always get three independent votes, Medium/Low get one (re-checked with three only if that single vote disagrees with the hunter) — see `run-metadata.json` → `vote_policy`. A DPDP run reuses the architecture map and PII inventory from a prior security run on the same target. Every phase prints a `cost:` line and the report carries a Cost-and-speed table.
+
 | Profile | When | Breadth |
 |---|---|---|
-| `quick` | Small repo, re-run, first look | One hunter wave, 1 verifier vote per candidate |
-| `standard` | Default | Hunter waves until a critic pass is clean, 3 verifier votes per candidate |
+| `auto` *(default)* | Let the engine size it from the stack | `quick` or `standard`, decided from file count and risk signals |
+| `quick` | Small repo, re-run, first look | One hunter wave; 1 vote for Medium/Low, 3 for High/Critical |
+| `standard` | Larger or risk-bearing apps | Hunter waves until a critic pass is clean; risk-based votes |
 | `deep` | High stakes: payments, HR/PII, health, auth providers, multi-tenant SaaS | Per-subsystem units, 3 votes plus a fresh final record check, second pass on prior-covered units |
 
 Profiles change breadth, never the evidence bar.
