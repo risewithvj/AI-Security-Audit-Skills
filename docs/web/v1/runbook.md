@@ -34,7 +34,7 @@ The user tells you `MODE=<mode> TYPE=<type>`. If they omit one, use the default.
 
 - **`lite`** — top risks only, one-page report. Fast; for free/smaller AIs. No DPDP pass unless explicitly asked.
 - **`pro`** (default) — the full six-phase audit. Automatically folds in the DPDP pass (Section 8) when personal data is found in the code.
-- **`god`** — everything in `pro` PLUS a second self-refutation pass over every finding, exploit chains, an attack narrative, a priority remediation roadmap, and explicit "continue from where you stopped" handling for zips too large to finish in one pass.
+- **`god`** — everything in `pro` PLUS a second self-refutation pass over every finding, risk chains, an impact scenario, a fix-priority remediation roadmap, and explicit "continue from where you stopped" handling for zips too large to finish in one pass.
 
 See the full MODE table in **Section 10**.
 
@@ -191,11 +191,12 @@ While auditing, keep a running inventory of personal data: **what** field, **whe
 | Client-side tampering phase | Yes | Yes | Yes |
 | DPDP pass | Only if asked | Auto when personal data found | Auto when personal data found |
 | Report | One page | Full report | Full report |
-| Extras | — | — | + second self-refutation pass over every finding; + exploit chains; + attack narrative; + priority remediation roadmap; + "continue from where you stopped" for oversized zips |
+| Extras | — | — | + second self-refutation pass over every finding; + risk chains; + impact scenario; + fix-priority remediation roadmap; + "continue from where you stopped" for oversized zips |
 
 - **LITE** = fastest. Surface the top risks and ship a one-page report (still with the three report sections and footer, and a mandatory "Not checked" line).
 - **PRO** = the default full audit; DPDP folds in automatically when personal data is present.
-- **GOD** = PRO plus: re-attack every confirmed finding and try to **refute** it (keep only what survives); build **exploit chains** (how small issues combine into a bigger compromise); write a short **attack narrative** (how a real attacker would walk the app end to end); give a **priority remediation roadmap**; and if the zip is too large to finish in one pass, stop cleanly and emit a **"continue from where you stopped"** note listing exactly what is done and what remains.
+- **GOD** = PRO plus: re-attack every confirmed finding and try to **refute** it (keep only what survives); build **risk chains** (how small issues combine into a bigger compromise); write a short **impact scenario** (how a real attacker would walk the app end to end); give a **fix-priority remediation roadmap**; and if the zip is too large to finish in one pass, stop cleanly and emit a **"continue from where you stopped"** note listing exactly what is done and what remains.
+- **DEEP (4-pass)** = for paid AIs that lose focus on one huge prompt. Run four prompts one after another **in the same chat** — (1) auth & sessions, (2) money & business logic, (3) files & injection, (4) client-side & XSS, then a merged final report. Each pass finishes and reports, then says *"Reply 'next' for pass N+1."* The four prompts are on the landing page and in `prompts.json` (`deep_pack`).
 
 ---
 
@@ -225,6 +226,23 @@ With `TYPE=auto`, detect the stack and apply the matching block(s). Each block i
 
 ---
 
+## 11b. BEFORE YOU SAY DONE
+
+**Don't pause for progress updates.** Don't stop to ask "should I continue?" or post a running commentary — finish the pass (or the whole audit), then report once. Only stop early if the zip is genuinely too large to finish, and then emit the "continue from where you stopped" note.
+
+Tick every route before you claim the audit is complete (name any you could not reach in "Not checked"):
+
+- [ ] Every authentication / login / password-reset / session route
+- [ ] Every money, cart, price, coupon and payment-callback route
+- [ ] Every route that takes an ID or owner reference (IDOR / object-level authz)
+- [ ] Every file upload, download, path-building and archive-extraction route
+- [ ] Every admin / privileged / internal / deprecated route
+- [ ] Every route rendering user input back to a page (XSS) and every client-side trust point
+- [ ] Every outbound request / webhook / server-side fetch (SSRF)
+- [ ] Every place personal data is stored, logged, or sent to a third party (DPDP, if in scope)
+
+---
+
 ## 12. REPORT FORMAT
 
 Every mode produces these **three sections** (LITE condenses to one page; top risks only in section 1):
@@ -233,7 +251,7 @@ Every mode produces these **three sections** (LITE condenses to one page; top ri
 2. **Hardening notes** — clearly labelled; **NEVER** counted as vulnerabilities/findings.
 3. **Not checked** — the **mandatory** list of what was out of reach: runtime-only issues (live auth flows, real sessions, timing/races, actual TLS, deployed headers); infrastructure not in the zip (servers, LB, WAF, cloud IAM, network policy, secrets managers, DB server config); dependency CVE/transitive depth unless a lockfile was reviewed; git history and rotated/old secrets; parts skipped for size (listed by path); dynamic/obfuscated code loaded at runtime; business logic whose intent was unclear from code alone. State: *"This audit is based solely on the submitted source snapshot. Absence of a finding is not proof of absence of a vulnerability."*
 
-For `pro`/`god`, lead with a short title + date, an executive summary (stack map, counts by severity, the single most important fix), and — where it helps — a findings table (`# | Title | Severity | CVSS 4.0 | file:line | Impact | Fix`), the PII inventory, the DPDP findings (if that pass ran), and prioritised recommendations noting the production risk of fixing vs. not fixing. `god` adds the exploit chains, attack narrative, priority roadmap, and (if needed) the "continue from where you stopped" note. Offer the report as a downloadable Markdown/HTML file when the environment allows.
+For `pro`/`god`, lead with a short title + date, an executive summary (stack map, counts by severity, the single most important fix), and — where it helps — a findings table (`# | Title | Severity | CVSS 4.0 | file:line | Impact | Fix`), the PII inventory, the DPDP findings (if that pass ran), and prioritised recommendations noting the production risk of fixing vs. not fixing. `god` adds the risk chains, impact scenario, fix-priority roadmap, and (if needed) the "continue from where you stopped" note. Offer the report as a downloadable Markdown/HTML file when the environment allows.
 
 **Fixed footer on every report (verbatim):**
 
