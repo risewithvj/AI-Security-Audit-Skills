@@ -184,6 +184,20 @@
       "file": "checklists/supply-chain-and-release.md"
     },
     {
+      "fingerprint": "299f9f171154b75a66074dec2dce3f3cabfac25c3a3f80bc21832f76e6f1f1a6",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/__pycache__/"
+    },
+    {
+      "fingerprint": "7f34da6a32d9d664ae10b3222afa9403fd9659eba2344b5ecbb0414895a676b3",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/__pycache__/aisa.cpython-314.pyc"
+    },
+    {
       "fingerprint": "2b51c889ce1ab8e0aa44dfe38fddb1d3f08e1eed1dd60299104c7f7eaf7750e0",
       "id": "SC8",
       "severity": "HIGH",
@@ -266,6 +280,13 @@
       "severity": "HIGH",
       "category": "Supply Chain",
       "file": "scripts/aisa_lib/__pycache__/wpvulns.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "e1ba10ef43da7e3f92a60967110f849d744150f7f28a5fa7c23704bc31bb5703",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/__pycache__/aisa.cpython-314.pyc"
     },
     {
       "fingerprint": "e0886b8fe03bdad11081197c09c6b4b72daad5ad74b646f9e50c53076c9f4c1f",
