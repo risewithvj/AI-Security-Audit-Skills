@@ -482,11 +482,12 @@ def build(run: Path, out_path: Path, framework: str | None = None) -> Path:
     costs = meta.get("phase_costs") or []
     if costs:
         _heading(doc, f"{n}.4 Cost and speed", 2)
-        _para(doc, "Engine phases only. Token figures are estimates (characters read / 4) of what the "
-                   "tool itself read; they are not LLM billing and exclude the reasoning passes.",
+        _para(doc, "Engine phases only. 'Engine I/O (chars/4)' counts the characters the tool itself "
+                   "read, divided by 4 - it is not LLM billing. AI token use isn't measured by the "
+                   "engine; check /cost in Claude Code after a run.",
               9.5, italic=True, after=4)
         t = _table(doc, [2600, 1700, 2100, 2960])
-        _row(t, ["Phase", "Time (s)", "Files read", "Est. tokens"], header=True)
+        _row(t, ["Phase", "Time (s)", "Files read", "Engine I/O (chars/4)"], header=True)
         tot_s = tot_f = tot_t = 0
         for c in costs:
             _row(t, [str(c.get("phase", "")), str(c.get("seconds", "")),

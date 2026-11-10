@@ -506,7 +506,8 @@ def _record_cost(args, seconds: float, io: dict) -> None:
     """B6: print a cost line for the phase and persist it on the run when resolvable."""
     phase = getattr(args, "cmd", "?")
     print(f"cost: {phase}  {seconds}s  {io['files_read']} files read  "
-          f"~{io['est_tokens']} tokens (estimate, chars/4)")
+          f"~{io['est_tokens']} engine I/O (chars/4). "
+          f"AI token use isn't measured by the engine. Check /cost in Claude Code after a run.")
     if phase in ("doctor",):
         return
     try:
