@@ -10,6 +10,28 @@
 
 Goal: work through the ledger, unit by unit, and return structured candidates that can be verified.
 
+## Read the flagged files first (scanners-first)
+
+Do not read the whole tree. A hunter opens, in full, only files that something already pointed at:
+
+1. Files flagged by the scanners (`leads.json` — Semgrep/Gitleaks/Trivy/OSV hits and exposed-file leads).
+2. Files on the **risk map**: `stack.json` → `likely_entry_files` and `india_pii_files`, plus whatever `architecture.md` marked trust-sensitive (auth, payments, tenant data, admin, uploads, background jobs).
+3. Files matched by a **checklist trigger** for the detected stack (the checklist selected a surface that lives in this file).
+
+Everything else is skimmed only when a trace from (1)–(3) leads into it. Any area never opened for this reason goes into the report's **Not checked** list by name, in one line. This keeps token spend on the code that actually carries risk.
+
+## Budget scales the fan-out
+
+`run-metadata.json` → `budget` sizes the waves (effort cap, not coverage of risk):
+
+| `--budget` | Hunters per wave | Waves | Trade-off |
+|---|---|---|---|
+| `small` | fewest (highest-priority units only) | one wave + one critic | cheapest; lower-priority surfaces lean on scanners + the risk map and are named under Not checked |
+| `normal` *(default)* | one hunter per planned unit | repeat until the critic adds nothing | balanced |
+| `large` | adds variant hunters and a second critic pass | widest | most thorough; highest token spend |
+
+Risk still wins: Critical/High surfaces are always hunted and always get the full verifier jury (Phase 4), whatever the budget.
+
 ## Waves
 
 1. Take ledger units with status `planned`, highest priority first.
