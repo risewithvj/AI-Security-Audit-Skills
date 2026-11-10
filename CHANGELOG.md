@@ -8,6 +8,16 @@
 
 # Changelog
 
+## 1.5.1 (2026-11-11)
+
+Defensive framing, a 4-pass deep pack, and a published web-AI scorecard.
+
+- **Defensive wording** across the runbook, prompts, paste files and landing page: "exploit chains" → "risk chains", "attack narrative" → "impact scenario", "roadmap" → "fix-priority roadmap", and every prompt now opens with *"I own this project and want a defensive security code review."*
+- **Deep (4-pass) prompt pack** for paid AIs, run one after another in the same chat — (1) auth & sessions, (2) money & business logic, (3) files & injection, (4) client-side & XSS then a merged report; each pass ends with "Reply 'next' for pass N+1". Added to `prompts.json` (`deep_pack`) and the landing-page picker as "Deep (4-pass)". Its contents target the gaps no web AI closed in the benchmark.
+- **Runbook**: "don't pause for progress updates — finish, then report", plus a route checklist the AI ticks before claiming the audit is done.
+- **Landing page**: a "Prepare your zip" box (remove `.git`, `node_modules`, `build`/`dist`, tests, images; never include `.env`) and an `aisa_web.py` download button (note: ChatGPT can't download it, so upload it with the zip).
+- **Web-AI scorecard** (`docs/benchmark/juice-shop-web-ai.html`): the God Mode prompt run across ChatGPT (20/60), Codex (23/60) and Claude.ai (26/60, partial), union 33/60, 0 false positives — full per-challenge matrix and the 27 challenges no web AI found. Linked from the README and the landing page.
+
 ## 1.5.0 (2026-11-11)
 
 A tiered web prompt system and a leaner CLI that spends fewer tokens for the same detection.
