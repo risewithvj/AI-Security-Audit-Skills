@@ -18,11 +18,15 @@ Group candidates by root cause: same missing check in the same function, or the 
 
 For each unique candidate, start fresh **verifiers** with the prompt in [../templates/agent-prompts.md](../templates/agent-prompts.md#verifier).
 
-| Profile | Votes |
+**Vote by risk, not by profile (saves tokens without losing accuracy).** Spend the three-vote jury only where a wrong call is expensive; wave the cheap stuff through with one vote, but never let a single vote silently overturn the hunter. This is the `vote_policy` in `run-metadata.json`:
+
+| Candidate severity (hunter's claim) | Votes |
 |---|---|
-| quick | 1 |
-| standard | 3 |
-| deep | 3, then one more fresh verifier re-checks the final record |
+| **Critical / High** | 3 independent verifiers |
+| **Medium / Low / Info** | 1 verifier |
+| Single vote **disagrees with the hunter** (confirms→rejects, or raises/lowers severity) | re-run with 3 before deciding |
+
+`deep` adds one more fresh verifier re-checking every final Critical/High record. A `quick` or `small --budget` run still uses 3 votes for Critical/High — risk overrides the profile here. State the vote count you used on each finding.
 
 Each verifier receives only: the claim (title, attacker, control, intended rule, result), the cited locations, `architecture.md`, the matching checklist, [../rules/evidence-gate.md](../rules/evidence-gate.md) and [../rules/false-positive-patterns.md](../rules/false-positive-patterns.md). It does **not** receive the hunter's reasoning or any other vote. Its job is to **refute**.
 
