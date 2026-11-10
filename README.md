@@ -304,44 +304,42 @@ AI-Security-Audit-Skills/
 
 ## 📊 Benchmark
 
-Measured against **OWASP Juice Shop** (the reference vulnerable app), `standard` profile, source-only.
+Measured against **OWASP Juice Shop** (the reference vulnerable app), `standard` profile, source-only. This is a **fresh v1.5.1 run** (not a re-score), scored against a **mechanically-selected** Core 30 / Full 60 answer key frozen **before** scoring — see the rule in [tests/benchmark/core30.md](tests/benchmark/core30.md) and the per-challenge file/class key in [tests/benchmark/juice-shop.labels.json](tests/benchmark/juice-shop.labels.json).
 
-| App | Stack | Matched | False-positive rate | Confirmed | Date | Version |
-|---|---|---|---|---|---|---|
-| OWASP Juice Shop | Node / Express / Angular | **52 / 60 (87%)** | **0%** | 28 | 2026-11-11 | v1.4.0 |
+| App | Stack | Core / 30 (strict) | Full / 60 (strict) | Full / 60 (coverage) | False positives | Date | Version |
+|---|---|---|---|---|---|---|---|
+| OWASP Juice Shop | Node / Express / Angular | **25 / 30** | **46 / 60** | **53 / 60** | **0** | 2026-11-11 | v1.5.1 (fresh run) |
 
-> **This is a source-only audit.** The skill reads code; it never runs the app or touches a live system. Juice Shop ships 118 challenges, but many are *runtime-only* (credential guessing, steganography, EXIF geo-stalking, timing/anti-automation, pure OSINT) and have **no root cause visible in source** — those are out of reach by design. The scorecard is scored against the 60 challenges whose root cause maps to a concrete source artifact.
+> **This is a source-only audit.** The skill reads code; it never runs the app or touches a live system. Juice Shop ships 118 challenges, but many are *runtime-only* (credential guessing, steganography, EXIF geo-stalking, timing/anti-automation, pure OSINT) and have **no root cause visible in source** — those are out of reach by design. The scored sets are picked mechanically from Juice Shop's own `category`/`tags`: OWASP-mapped classes only, puzzles/OSINT/Web3 excluded, first 30 (Core) and first 60 (Full) by difficulty.
 
-> **Method.** The six-phase audit was run on Juice Shop under v1.3; v1.4 re-scores those confirmed findings with the improved `aisa.py benchmark` engine (exact `finding_id`/`challenge_id` mapping, acronym matching for XSS/RCE/SSRF/XXE/JWT, and reconciliation of "extra" findings against the labels before the false-positive rate). Under v1.4 the two previously "extra" findings reconcile to their real challenges (`exposedMetrics`, `knownVulnerableComponent`), so the honest **false-positive rate is 0%**. A fresh full re-audit was not run in this cycle.
+> **Two scores, same rules.** **Strict** counts only the distinct challenges identified by the right file **and** the right bug class. **Coverage** credits a found vulnerability with its sibling challenges in the same file. Core 30 is the headline; Full 60 is the wider reference.
 
-**Matched (highlights).** SQL injection (login auth-bypass, UNION search, Christmas special), NoSQL `$where` injection (reviews, order tracking, mass review overwrite), JWT forgery via a hardcoded RSA key, unsalted-MD5 password storage, open-redirect allowlist bypass, XXE + local file read, YAML-bomb DoS, server-side `eval`/RCE in the B2B order path, SSTI via username, SSRF via profile-image URL, five XSS sinks (`bypassSecurityTrustHtml`, video subtitle), `/ftp` directory listing + forgotten backups, `/support/logs` and `/metrics` exposure, self-register-as-admin mass assignment, unprotected product `PUT`, client-side-only route guards (admin/score-board/web3/token-sale), chatbot coupon prompt-injection, poison-null-byte path traversal, passkey hijack/bypass, password-hash leak via the `fields` param, reset rate-limit bypass, change-password-without-current-password, typosquatted frontend dependency, and end-of-life components.
+**Core misses (5 of 30).** `aiDebuggingChallenge`, `chatbotPromptInjectionChallenge` (both `routes/chat.ts` — the LLM surface wasn't hunted this run), `adminSectionChallenge` (client-side route guard), `reflectedXssChallenge` (`track-result` component), `ghostLoginChallenge` (deleted-user login via `dataErasure`). These are honest coverage gaps in this run, stated plainly, not tuned away.
 
-**Missed (8).** `jwtUnsigned`, `deprecatedInterface`, `usernameXss`, `persistedXssUser`, `persistedXssFeedback`, `misplacedIacFiles`, `forgedCoupon`, `iacLeakedKey`. v1.4 adds **general** checklist coverage for each underlying class — stored XSS through an incomplete/bypassable sanitiser, unsigned/weakly-signed JWTs accepted by end-of-life libraries, reachable deprecated endpoints that skip current authorization, IaC/config files and the keys inside them committed to the tree, and forgeable coupon/voucher tokens — so a fresh audit is equipped to catch them. None of these fixes is benchmark-specific.
+**Matched (highlights).** SQL injection (login auth-bypass, UNION search), NoSQL `$where` injection (reviews, order tracking, mass review overwrite), JWT forgery via a hardcoded RSA key, unsalted-MD5 password storage, open-redirect allowlist bypass, XXE + file disclosure, YAML-bomb/insecure-deserialization, server-side `eval`/RCE in the B2B order path, SSRF via profile-image URL, DOM/stored/API XSS sinks (`bypassSecurityTrustHtml`), `/ftp` directory listing + confidential docs, `/metrics` exposure, self-register-as-admin mass assignment, poison-null-byte path traversal, free-deluxe payment bypass, forged review/feedback, negative-order business logic, upload size/type bypass, and end-of-life/typosquatted components.
 
-**Extra (0 genuine, 2 reconciled).** The two confirmed findings not directly tied to a label — the exposed `/metrics` endpoint and the end-of-life `sanitize-html` / `jsonwebtoken` dependencies — correspond to real challenges (`exposedMetrics`, `knownVulnerableComponent`). v1.4's reconciliation step recognises them as duplicate detections of labelled issues rather than false positives, giving a measured **0% false-positive rate**.
-
-Every confirmed finding carries machine-checked `file:line` evidence re-read from the source by `aisa.py validate`, and each was independently verified by three refutation passes before being reported.
+Every confirmed finding carries machine-checked `file:line` evidence re-read from the source, and High/Critical candidates were independently verified by refutation passes before being reported. **Zero false positives** — Juice Shop is vulnerable by design, so there is little to get wrong; a handful of real CLI findings (SSRF, premium/CTF keys, order-history IDOR) fall outside the 60-challenge set and are simply not counted, never penalised.
 
 ---
 
 ## 🌐 Web AI benchmark
 
-The same **God Mode** web prompt, run by different chat AIs on the OWASP Juice Shop zip, scored against the 60-challenge source-visible answer key. **Both methods, same rules for everyone:** **Strict** counts only the distinct challenges a tool clearly identified; **Coverage** credits a found vulnerability with its sibling challenges in the same file (one login SQL-injection finding credits all four login challenges). Measured **2026-11-11**.
+The fresh **CLI v1.5.1 run** vs the same web-AI reports on the OWASP Juice Shop zip, scored against the **same mechanical** Core 30 / Full 60 answer key. **Same rules for everyone:** **Strict** counts only the distinct challenges a tool identified by the right file **and** bug class; **Coverage** credits a found vulnerability with its sibling challenges in the same file. Measured **2026-11-11**.
 
-| Tool (model) | Prompt | Run | Strict / 60 | Coverage / 60 | False positives |
-|---|---|---|---|---|---|
-| CLI engine (AISA v1.4, re-scored v1.5) | six-phase audit | finished | **29** | **52** | 0 |
-| Claude.ai (Sonnet 5.5) | God Mode | partial — 5 min | **26** | **39** | 0 |
-| Codex (GPT-6.1 Sol Medium) | softer defensive | finished, many nudges | **23** | **40** | 0 |
-| ChatGPT (GPT-6 High) | God Mode | finished, 2 nudges | **20** | **38** | 0 |
-| Gemini Pro | God Mode, then softer | refused God Mode; softer prompt couldn't read the zip | — | — | — |
-| **Web-AI union** | — | — | **33** | **46** | **0** |
+| Tool (model) | Prompt | Run | Core / 30 | Full / 60 strict | Full / 60 coverage | False positives |
+|---|---|---|---|---|---|---|
+| **AISA CLI (v1.5.1)** | full audit | fresh run, ~9 min | **25** | **46** | **53** | 0 |
+| Codex (web) | softer defensive | finished, many nudges | **11** | **23** | **46** | 0 |
+| Claude.ai (web) | full audit | partial — 5 min | **10** | **23** | **45** | 0 |
+| ChatGPT (web) | full audit | finished, 2 nudges | **7** | **18** | **48** | 0 |
+| Gemini 2.5 Pro (web) | full audit, then softer | refused the task | — | — | — | — |
+| **Web-AI union** | — | — | **14** | **29** | **53** | **0** |
 
-Found only by (distinct): **ChatGPT** — chatbot greedy prompt-injection, local file read (XML), b2b RCE "occupy"; **Codex** — passkey credential overwrite, passkey signature bypass, RESTful/stored XSS; **Claude.ai** — DB-schema via UNION SQLi, leaked key in Terraform IaC, reset-password rate-limit bypass, weak crypto.
+On the frozen **Core 30** the CLI (25) found **more than twice** any single web AI (7–11) and **more than all three combined** (14). On exact **Full-60** matches the CLI (46) beats the **web union** (29). On the looser **coverage** metric the field is close (CLI 53 vs 45–48 each, web union 53) — so the engine's real edge is **precision and completeness**, not reaching bugs the web AIs cannot. **Zero false positives** across every tool: Juice Shop is vulnerable by design, so there is little to get wrong, and real findings outside the 60 labels are not counted, never penalised.
 
-Notes: **zero false positives** across all three web AIs — every reported item was a real, source-traced vulnerability (some fell outside the 60 labels and were simply not counted, never penalised). This is **not** a clean model-vs-model comparison. **Claude.ai** was **partial**: about 40 routes and the client-side phase were not reached; it used 31% of the session's usage, yet was ahead when it stopped. **Codex** used the softer prompt, not God Mode. **Gemini Pro** refused. The CLI figure was re-scored under v1.5, not re-run.
+**Read honestly — this is *not* a clean model-vs-model comparison.** **Claude.ai** was **partial**: about 40 routes and the client-side phase were not reached; it used **31% of the session's usage**. **Codex** used the **softer defensive** prompt, not the full one. **Gemini 2.5 Pro** refused the task. The CLI figure is a **fresh** v1.5.1 run.
 
-**➡️ Full scorecard** — per-challenge matrix (all 60), found-only-by lists, and the 27 challenges no web AI found: [juice-shop-web-ai.html](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/juice-shop-web-ai.html).
+**➡️ Full scorecard** — per-challenge matrix (all 60) and the Core 30 rule: [juice-shop-web-ai.html](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/juice-shop-web-ai.html) · one-page [executive-scorecard.pdf](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/executive-scorecard.pdf).
 
 ---
 
@@ -354,17 +352,16 @@ v1.5 spends fewer tokens for the **same** detection. Four levers, all on by defa
 - **Scanners first** — hunters open only files flagged by the scanners, the risk map or a checklist trigger; everything else is named under **Not checked** instead of being read.
 - **`--budget small|normal|large`** — caps hunters and waves (`small` = cheapest).
 
-Measured on **OWASP Juice Shop** (source-only, v1.5 defaults, 2026-11-11):
+Measured on the **fresh** OWASP Juice Shop run (source-only, v1.5.1 auto defaults, 2026-11-11):
 
 | | Result |
 |---|---|
 | Auto profile chosen | **standard** (1,459 source files; jwt, llm, uploads signals) |
-| Detection | **52 / 60 (87%)**, **0% false positives** — unchanged from v1.4 |
-| Engine I/O (chars/4), per phase | init ≈ 23 s / ~0.96 M · validate ≈ 0.5 s / ~0.13 M · PII inventory ≈ 62 s / ~5.2 M |
+| Detection | **25 / 30 Core**, **46 / 60 Full strict**, **53 / 60 coverage**, **0% false positives** |
+| Engine phases (wall) | doctor 18 s · init 1.2 s · scan **179 s** · normalize 0.1 s · PII 22 s — ~3.7 min engine |
+| End-to-end | ~9 min including the AI hunt + verify phases |
 
-Each run prints a `cost:` line per phase (time, files read, engine I/O = characters read / 4) and the report carries a **Cost and speed** table. **Engine I/O is not AI token use** — it only counts what the Python engine read. AI token use isn't measured by the engine; check `/cost` in Claude Code after a run.
-
-To be clear about the number: the **52/60 was re-scored, not re-run**. The six-phase hunt was run under v1.4; v1.5 re-scores those same confirmed findings with the improved engine and measures the engine-phase costs above. The lean defaults reduce effort on low-risk code and defer unflagged files to **Not checked**; they do not drop coverage of risk. A fresh end-to-end audit under the v1.5 defaults was not run this cycle.
+Each run prints a `cost:` line per phase (time, files read, engine I/O = characters read / 4) and the report carries a **Cost and speed** table. **Engine I/O is not AI token use** — it only counts what the Python engine read. AI token use isn't measured by the engine; check `/cost` in Claude Code after a run. Unlike earlier cycles, this benchmark is a **fresh end-to-end audit**, not a re-score.
 
 ---
 
