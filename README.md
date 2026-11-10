@@ -326,17 +326,20 @@ Every confirmed finding carries machine-checked `file:line` evidence re-read fro
 
 ## 🌐 Web AI benchmark
 
-The same **God Mode** web prompt, run by different chat AIs on the OWASP Juice Shop zip, scored with `aisa.py benchmark` against the 60-challenge source-visible answer key (exact-id mode: distinct challenges each AI clearly identified, no sibling inflation). Measured **2026-11-11**.
+The same **God Mode** web prompt, run by different chat AIs on the OWASP Juice Shop zip, scored against the 60-challenge source-visible answer key. **Both methods, same rules for everyone:** **Strict** counts only the distinct challenges a tool clearly identified; **Coverage** credits a found vulnerability with its sibling challenges in the same file (one login SQL-injection finding credits all four login challenges). Measured **2026-11-11**.
 
-| AI (model) | Prompt | Run | Matched / 60 | False positives | Challenges only this AI found |
+| Tool (model) | Prompt | Run | Strict / 60 | Coverage / 60 | False positives |
 |---|---|---|---|---|---|
-| ChatGPT (GPT-6 High) | God Mode | finished, 22 min, 2 nudges | **20** | 0 | chatbot greedy prompt-injection; local file read (XML); b2b RCE "occupy" |
-| Codex (GPT-6.1 Sol Medium) | softer defensive | finished, 18 min, many nudges | **23** | 0 | passkey credential overwrite; passkey signature bypass; RESTful/stored XSS |
-| Claude.ai (Sonnet 5.5) | God Mode | partial — 5 min, ~31% of session | **26** | 0 | DB-schema via UNION SQLi; leaked key in Terraform IaC; reset-password rate-limit bypass; weak crypto |
+| CLI engine (AISA v1.4, re-scored v1.5) | six-phase audit | finished | **29** | **52** | 0 |
+| Claude.ai (Sonnet 5.5) | God Mode | partial — 5 min | **26** | **39** | 0 |
+| Codex (GPT-6.1 Sol Medium) | softer defensive | finished, many nudges | **23** | **40** | 0 |
+| ChatGPT (GPT-6 High) | God Mode | finished, 2 nudges | **20** | **38** | 0 |
 | Gemini Pro | God Mode, then softer | refused God Mode; softer prompt couldn't read the zip | — | — | — |
-| **Combined (union)** | — | — | **33** | **0** | — |
+| **Web-AI union** | — | — | **33** | **46** | **0** |
 
-Notes: **zero false positives** across all three — every reported item was a real, source-traced vulnerability (some fell outside the 60 labels and were simply not counted, never penalised). The runs are **not** a clean model-vs-model comparison: the models, prompts and stop points differ, and Claude's 26 came from a **partial** run that was still ahead when it stopped, while ChatGPT and Codex ran to completion. For reference, the CLI engine scores **52 / 60, 0% FP** on the same key.
+Found only by (distinct): **ChatGPT** — chatbot greedy prompt-injection, local file read (XML), b2b RCE "occupy"; **Codex** — passkey credential overwrite, passkey signature bypass, RESTful/stored XSS; **Claude.ai** — DB-schema via UNION SQLi, leaked key in Terraform IaC, reset-password rate-limit bypass, weak crypto.
+
+Notes: **zero false positives** across all three web AIs — every reported item was a real, source-traced vulnerability (some fell outside the 60 labels and were simply not counted, never penalised). This is **not** a clean model-vs-model comparison. **Claude.ai** was **partial**: about 40 routes and the client-side phase were not reached; it used 31% of the session's usage, yet was ahead when it stopped. **Codex** used the softer prompt, not God Mode. **Gemini Pro** refused. The CLI figure was re-scored under v1.5, not re-run.
 
 **➡️ Full scorecard** — per-challenge matrix (all 60), found-only-by lists, and the 27 challenges no web AI found: [juice-shop-web-ai.html](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/juice-shop-web-ai.html).
 
