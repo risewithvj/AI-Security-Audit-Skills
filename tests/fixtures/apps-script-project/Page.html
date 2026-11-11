@@ -1,0 +1,12 @@
+<!-- AI-Security-Audit-Skills test fixture | Vijaya Kumar L (Rise With VJ) | github.com/risewithvj | MIT -->
+<!-- Planted Apps Script client that calls a server function via google.script.run. -->
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+      // POSITIVE: getAllRecords() is a non-underscore server global, so it is
+      // web-callable from here regardless of doGet/doPost - it must authorise.
+      google.script.run.withSuccessHandler(render).getAllRecords();
+    </script>
+  </body>
+</html>
