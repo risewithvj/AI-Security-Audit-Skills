@@ -20,6 +20,11 @@ td:first-child,th:first-child{text-align:left}
 .core{border-left:2px solid #3a3a1a} tr.corehdr td{color:var(--grn);font-weight:700;background:#101403}
 footer{margin-top:40px;color:var(--mut);font-size:.85rem;border-top:1px solid var(--line);padding-top:14px}
 a{color:var(--red)}
+.consent{position:fixed;left:16px;right:16px;bottom:16px;z-index:300;max-width:560px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 10px 30px rgba(0,0,0,.4);display:none}
+.consent.show{display:block}.consent p{margin:0 0 12px;font-size:.9rem;color:var(--mut)}
+.consent .row{display:flex;gap:10px;justify-content:flex-end}
+.consent button{cursor:pointer;font:inherit;font-weight:700;border-radius:9px;padding:9px 16px;border:1px solid var(--line);background:#141414;color:var(--fg)}
+.consent button.accept{background:var(--red);border-color:var(--red);color:#fff}
 </style></head><body><div class="wrap">
 <h1>OWASP Juice Shop — <b>v1.5.1 Benchmark</b></h1>
 <p class="sub">Fresh AISA CLI v1.5.1 run vs the same web-AI reports, scored against a <b>mechanically-selected</b> Core 30 / Full 60 answer key. Same rules for every tool. Measured 2026-11-11.</p>
@@ -107,5 +112,9 @@ a{color:var(--red)}
 </table></div>
 <h2>What the numbers say</h2>
 <div class="note">On the frozen Core 30 the CLI engine (25) found more than twice any single web AI (7–11) and more than all three combined (14). On exact Full-60 matches the CLI (46) beats the web union (29). On the looser coverage metric the field is close (CLI 53 vs 45–48), so the engine's real advantage is <b>precision and completeness</b>, not reaching bugs the web AIs cannot. The CLI's 5 Core misses (chatbot/LLM in routes/chat.ts, the admin-section guard, reflected-XSS in track-result, and the deleted-user ghost login) are honest coverage gaps in this run.</div>
-<footer>AI-Security-Audit-Skills v1.5.1 &middot; by <b>Vijaya Kumar L</b> (Rise With VJ) &middot; <a href="https://github.com/risewithvj/AI-Security-Audit-Skills">github.com/risewithvj/AI-Security-Audit-Skills</a> &middot; MIT. Executive one-pager: <a href="executive-scorecard.pdf">executive-scorecard.pdf</a>. Read-only audit; recommendations only; target code never modified.</footer>
-</div></body></html>
+<footer>AI-Security-Audit-Skills v1.5.1 &middot; by <b>Vijaya Kumar L</b> (Rise With VJ) &middot; <a href="https://github.com/risewithvj/AI-Security-Audit-Skills" data-event="github_click">github.com/risewithvj/AI-Security-Audit-Skills</a> &middot; MIT. Executive one-pager: <a href="executive-scorecard.pdf" data-event="pdf_download">executive-scorecard.pdf</a>. Read-only audit; recommendations only; target code never modified.</footer>
+</div>
+<div class="consent" id="consent" role="dialog" aria-live="polite" aria-label="Analytics consent"><p>Anonymous usage analytics (clicks only, never audit content). Consent Mode v2: storage stays denied until you accept; ad signals never enabled.</p><div class="row"><button class="decline" type="button">Decline</button><button class="accept" type="button">Accept</button></div></div>
+<script>document.addEventListener("click",function(e){var el=e.target.closest&&e.target.closest("[data-event]");if(!el)return;window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:el.getAttribute("data-event")});});</script>
+<script src="../analytics.js" defer></script>
+</body></html>

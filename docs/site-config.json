@@ -1,0 +1,5 @@
+{
+  "_comment": "GTM is live. GA4 is configured INSIDE the GTM container, not on the page, so ga4 stays empty. See docs/ANALYTICS.md.",
+  "ga4": "",
+  "gtm": "GTM-W488FK5H"
+}
