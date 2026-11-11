@@ -1,0 +1,156 @@
+# -----------------------------------------------------------------------------
+# AI-Security-Audit-Skills - bundled PHP / WordPress Semgrep rules (work offline)
+# Author   : Vijaya Kumar L  (Rise With VJ)
+# GitHub   : https://github.com/risewithvj
+# LinkedIn : https://www.linkedin.com/in/vijayakumarl/
+# License  : MIT
+# High-signal leads for custom PHP and WordPress themes/plugins. Every hit is a
+# lead for a hunter, never a finding by itself.
+# -----------------------------------------------------------------------------
+rules:
+  - id: aisa.php.wpdb-unprepared
+    languages: [php]
+    severity: ERROR
+    message: $wpdb query built from an interpolated or concatenated value without $wpdb->prepare(). Use $wpdb->prepare() with placeholders.
+    metadata: {cwe: ["CWE-89: SQL Injection"], owasp: ["A05:2025"], category: injection}
+    pattern-either:
+      - pattern: $W->query("...{$X}...")
+      - pattern: $W->get_results("...{$X}...")
+      - pattern: $W->get_var("...{$X}...")
+      - pattern: $W->get_row("...{$X}...")
+      - pattern: $W->get_col("...{$X}...")
+      - pattern: $W->query("..." . $X . "...")
+      - pattern: $W->query("..." . $X)
+      - pattern: $W->get_results("..." . $X . "...")
+      - pattern: $W->get_results("..." . $X)
+      - pattern: $W->get_var("..." . $X . "...")
+
+  - id: aisa.php.echo-request-xss
+    languages: [php]
+    severity: ERROR
+    message: Request data echoed without escaping (esc_html/esc_attr/esc_url/sanitize_*). Reflected XSS.
+    metadata: {cwe: ["CWE-79: Cross-site Scripting"], owasp: ["A05:2025"], category: xss}
+    patterns:
+      - pattern-either:
+          - pattern: echo $S[$K];
+          - pattern: print $S[$K];
+          - pattern: echo "..." . $S[$K];
+          - pattern: echo $S[$K] . "...";
+      - metavariable-regex: {metavariable: $S, regex: ^\$?_(GET|POST|REQUEST|COOKIE)$}
+
+  - id: aisa.php.unserialize-request
+    languages: [php]
+    severity: ERROR
+    message: unserialize()/maybe_unserialize() on request data. PHP object injection. Use JSON instead.
+    metadata: {cwe: ["CWE-502: Deserialization of Untrusted Data"], owasp: ["A05:2025"], category: deserialization}
+    patterns:
+      - pattern-either:
+          - pattern: unserialize($S[$K])
+          - pattern: maybe_unserialize($S[$K])
+          - pattern: unserialize($S[$K], ...)
+      - metavariable-regex: {metavariable: $S, regex: ^\$?_(GET|POST|REQUEST|COOKIE)$}
+
+  - id: aisa.php.include-request
+    languages: [php]
+    severity: ERROR
+    message: include/require path comes from request data. Local/Remote file inclusion.
+    metadata: {cwe: ["CWE-98: PHP File Inclusion"], owasp: ["A05:2025"], category: injection}
+    patterns:
+      - pattern-either:
+          - pattern: include($S[$K]);
+          - pattern: include_once($S[$K]);
+          - pattern: require($S[$K]);
+          - pattern: require_once($S[$K]);
+          - pattern: include "..." . $S[$K];
+          - pattern: require "..." . $S[$K];
+      - metavariable-regex: {metavariable: $S, regex: ^\$?_(GET|POST|REQUEST|COOKIE)$}
+
+  - id: aisa.php.dynamic-eval
+    languages: [php]
+    severity: ERROR
+    message: Dynamic code execution (eval/assert/create_function/preg_replace with /e). Confirm no request or DB data reaches it.
+    metadata: {cwe: ["CWE-95: Eval Injection"], owasp: ["A05:2025"], category: injection}
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: assert($X)
+      - pattern: create_function(...)
+      - pattern: preg_replace("=...=e", ...)
+      - pattern: preg_replace("/.../e", ...)
+
+  - id: aisa.php.exec-request
+    languages: [php]
+    severity: ERROR
+    message: OS command built from request data. Command injection.
+    metadata: {cwe: ["CWE-78: OS Command Injection"], owasp: ["A05:2025"], category: injection}
+    patterns:
+      - pattern-either:
+          - pattern: system("..." . $S[$K])
+          - pattern: exec("..." . $S[$K])
+          - pattern: shell_exec("..." . $S[$K])
+          - pattern: passthru("..." . $S[$K])
+          - pattern: system("..." . $S[$K] . "...")
+          - pattern: exec("..." . $S[$K] . "...")
+          - pattern: shell_exec("..." . $S[$K] . "...")
+          - pattern: passthru("..." . $S[$K] . "...")
+          - pattern: system("...{$S[$K]}...")
+          - pattern: exec("...{$S[$K]}...")
+          - pattern: shell_exec("...{$S[$K]}...")
+      - metavariable-regex: {metavariable: $S, regex: ^\$?_(GET|POST|REQUEST|COOKIE|SERVER)$}
+
+  - id: aisa.php.extract-request
+    languages: [php]
+    severity: ERROR
+    message: extract() on request data overwrites arbitrary local variables. Remove it.
+    metadata: {cwe: ["CWE-621: Variable Extraction Error"], owasp: ["A05:2025"], category: injection}
+    patterns:
+      - pattern: extract($S)
+      - metavariable-regex: {metavariable: $S, regex: ^\$?_(GET|POST|REQUEST|COOKIE)$}
+
+  - id: aisa.php.ssrf-request-url
+    languages: [php]
+    severity: WARNING
+    message: Outbound fetch to a request-controlled URL. Confirm an allowlist; otherwise SSRF.
+    metadata: {cwe: ["CWE-918: Server-Side Request Forgery"], owasp: ["A05:2025"], category: ssrf}
+    patterns:
+      - pattern-either:
+          - pattern: file_get_contents($S[$K])
+          - pattern: wp_remote_get($S[$K])
+          - pattern: wp_remote_post($S[$K])
+          - pattern: curl_setopt($CH, CURLOPT_URL, $S[$K])
+      - metavariable-regex: {metavariable: $S, regex: ^\$?_(GET|POST|REQUEST)$}
+
+  - id: aisa.php.upload-no-type-check
+    languages: [php]
+    severity: WARNING
+    message: move_uploaded_file without a verified type/extension check nearby. Confirm uploads cannot be PHP.
+    metadata: {cwe: ["CWE-434: Unrestricted Upload of File with Dangerous Type"], owasp: ["A05:2025"], category: file-upload}
+    pattern: move_uploaded_file(...)
+
+  - id: aisa.php.rest-permission-open
+    languages: [php]
+    severity: WARNING
+    message: register_rest_route with permission_callback __return_true. Confirm this route (especially a write route) should be public.
+    metadata: {cwe: ["CWE-862: Missing Authorization"], owasp: ["A01:2025", "API5:2023"], category: access-control}
+    pattern-either:
+      - pattern: register_rest_route(..., array(..., 'permission_callback' => '__return_true', ...), ...)
+      - pattern: register_rest_route(..., [..., 'permission_callback' => '__return_true', ...], ...)
+      - pattern: register_rest_route(..., array(..., 'permission_callback' => '__return_true', ...))
+      - pattern: register_rest_route(..., [..., 'permission_callback' => '__return_true', ...])
+
+  - id: aisa.php.ajax-nopriv-no-nonce
+    languages: [php]
+    severity: WARNING
+    message: Unauthenticated AJAX handler (wp_ajax_nopriv_). Confirm the handler calls check_ajax_referer/wp_verify_nonce and a capability check.
+    metadata: {cwe: ["CWE-352: Cross-Site Request Forgery"], owasp: ["A01:2025"], category: access-control}
+    pattern: add_action("=~/wp_ajax_nopriv_/", ...)
+
+  - id: aisa.php.base64-eval
+    languages: [php]
+    severity: ERROR
+    message: eval() of a base64/gzinflate-decoded payload. Classic PHP backdoor/obfuscation.
+    metadata: {cwe: ["CWE-506: Embedded Malicious Code"], owasp: ["A05:2025"], category: malware}
+    pattern-either:
+      - pattern: eval(base64_decode(...))
+      - pattern: eval(gzinflate(...))
+      - pattern: eval(gzuncompress(...))
+      - pattern: eval(str_rot13(...))

@@ -1,0 +1,89 @@
+# -----------------------------------------------------------------------------
+# AI-Security-Audit-Skills - bundled Google Apps Script rules (work offline)
+# Author   : Vijaya Kumar L  (Rise With VJ)
+# GitHub   : https://github.com/risewithvj
+# LinkedIn : https://www.linkedin.com/in/vijayakumarl/
+# License  : MIT
+# Apps Script (.gs) is JavaScript-flavoured but uses a .gs extension Semgrep does
+# not parse as JS, so these are generic (regex) rules. Every hit is a lead.
+# -----------------------------------------------------------------------------
+rules:
+  - id: aisa.gs.webapp-anyone-anonymous
+    languages: [generic]
+    severity: WARNING
+    message: Apps Script web app is deployed with access ANYONE / ANYONE_ANONYMOUS. Confirm it is meant to be callable without login, and that doGet/doPost authorise each action.
+    metadata: {cwe: ["CWE-284: Improper Access Control"], owasp: ["A01:2025"], category: access-control}
+    paths: {include: ["appsscript.json", "*.json"]}
+    pattern-regex: '"access"\s*:\s*"ANYONE(_ANONYMOUS)?"'
+
+  - id: aisa.gs.xframe-allowall
+    languages: [generic]
+    severity: WARNING
+    message: setXFrameOptionsMode(ALLOWALL) disables clickjacking protection on the served HTML.
+    metadata: {cwe: ["CWE-1021: Improper Restriction of Rendered UI Layers"], owasp: ["A05:2025"], category: client-side}
+    paths: {include: ["*.gs", "*.js", "*.html"]}
+    pattern-regex: 'setXFrameOptionsMode\s*\(\s*[A-Za-z0-9_.]*ALLOWALL'
+
+  - id: aisa.gs.urlfetch-user-url
+    languages: [generic]
+    severity: WARNING
+    message: UrlFetchApp.fetch to a request-controlled URL (e.parameter / e.postData). Confirm an allowlist; otherwise SSRF.
+    metadata: {cwe: ["CWE-918: Server-Side Request Forgery"], owasp: ["A05:2025"], category: ssrf}
+    paths: {include: ["*.gs", "*.js"]}
+    pattern-regex: 'UrlFetchApp\.fetch\s*\(\s*(e\.parameter|e\.parameters|e\.postData)'
+
+  - id: aisa.gs.html-user-input
+    languages: [generic]
+    severity: WARNING
+    message: HtmlService output built from request input (e.parameter) without escaping. Possible XSS in the web app.
+    metadata: {cwe: ["CWE-79: Cross-site Scripting"], owasp: ["A05:2025"], category: xss}
+    paths: {include: ["*.gs", "*.js"]}
+    pattern-regex: 'createHtmlOutput\s*\([^)]*e\.parameter'
+
+  - id: aisa.gs.hardcoded-secret
+    languages: [generic]
+    severity: WARNING
+    message: Hardcoded credential in Apps Script. Keep secrets in PropertiesService (Script/User properties), not in code.
+    metadata: {cwe: ["CWE-798: Use of Hard-coded Credentials"], owasp: ["A07:2025"], category: secrets}
+    paths: {include: ["*.gs"]}
+    pattern-regex: '(?i)(api[_-]?key|authtoken|access[_-]?token|client[_-]?secret|password|passwd)\s*[:=]\s*["''][A-Za-z0-9_\-\.]{16,}["'']'
+
+  - id: aisa.gs.active-user-auth
+    languages: [generic]
+    severity: WARNING
+    message: Session.getActiveUser() can be empty for ANYONE_ANONYMOUS web apps; do not rely on it alone for authorization.
+    metadata: {cwe: ["CWE-287: Improper Authentication"], owasp: ["A07:2025"], category: auth}
+    paths: {include: ["*.gs", "*.js"]}
+    pattern-regex: 'Session\.getActiveUser\(\)\.getEmail\(\)'
+
+  - id: aisa.gs.script-run-callable
+    languages: [generic]
+    severity: WARNING
+    message: This server function is reachable from the client via google.script.run. EVERY non-underscore global in the project is web-callable this way - confirm the function authorises the caller itself (google.script.run bypasses doGet/doPost; name functions `_private` to hide them).
+    metadata: {cwe: ["CWE-862: Missing Authorization"], owasp: ["A01:2025"], category: access-control}
+    paths: {include: ["*.gs", "*.js", "*.html"]}
+    pattern-regex: 'google\.script\.run\s*(\.\s*with[A-Za-z]+\s*\([^)]*\)\s*)*\.\s*[A-Za-z_$][\w$]*\s*\('
+
+  - id: aisa.gs.active-vs-effective-user
+    languages: [generic]
+    severity: WARNING
+    message: Session.getEffectiveUser() returns the user the script RUNS AS (the deployer, for an "Execute as me" web app), not the caller - never use it to authorise a request. getActiveUser() is the caller but is empty for ANYONE_ANONYMOUS web apps. Use an explicit allow-list or a shared secret.
+    metadata: {cwe: ["CWE-287: Improper Authentication"], owasp: ["A01:2025"], category: auth}
+    paths: {include: ["*.gs", "*.js"]}
+    pattern-regex: 'Session\.getEffectiveUser\s*\(\s*\)'
+
+  - id: aisa.gs.drive-anyone-sharing
+    languages: [generic]
+    severity: WARNING
+    message: Programmatic Drive/Sheets sharing to ANYONE / ANYONE_WITH_LINK makes the file public (or public-to-anyone-with-the-link). Confirm this is intended and that the file holds no personal or confidential data; prefer per-user sharing.
+    metadata: {cwe: ["CWE-732: Incorrect Permission Assignment"], owasp: ["A01:2025"], category: access-control}
+    paths: {include: ["*.gs", "*.js"]}
+    pattern-regex: '(setSharing\s*\(\s*[A-Za-z0-9_.]*ANYONE(_WITH_LINK)?|Access\.ANYONE(_WITH_LINK)?)'
+
+  - id: aisa.gs.urlfetch-settings-url
+    languages: [generic]
+    severity: WARNING
+    message: UrlFetchApp.fetch to a URL read from Script/User properties or a settings object, with no host allow-list. Anyone with edit access to the script or its properties can repoint it (SSRF / data exfiltration). Validate the host against an allow-list before fetching.
+    metadata: {cwe: ["CWE-918: Server-Side Request Forgery"], owasp: ["A05:2025"], category: ssrf}
+    paths: {include: ["*.gs", "*.js"]}
+    pattern-regex: 'UrlFetchApp\.fetch\s*\(\s*[^)]*(PropertiesService|getScriptProperties|getUserProperties|getDocumentProperties|getProperty|SETTINGS|settings|CONFIG)\b'
