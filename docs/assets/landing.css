@@ -1,6 +1,6 @@
 /* AI-Security-Audit-Skills landing | Vijaya Kumar L (Rise With VJ) | github.com/risewithvj | MIT */
 :root{
-  --bg:#0A0A0B;--bg2:#111114;--card:#141418;--card2:#1a1a1f;--fg:#F4F4F5;--mut:#A1A1AA;--faint:#71717A;
+  --bg:#0A0A0B;--bg2:#111114;--card:#141418;--card2:#1a1a1f;--fg:#F4F4F5;--mut:#A1A1AA;--faint:#8E8E97;
   --line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);
   --red:#FF3B30;--red2:#FF6A5F;--btn:#D92D20;--btn-h:#B42318;--glow:rgba(255,59,48,.22);
   --ok:#22C55E;--warn:#F59E0B;--crit:#EF4444;--high:#F97316;--blue:#60A5FA;
@@ -9,7 +9,7 @@
   --mono:ui-monospace,SFMono-Regular,"Cascadia Code",Menlo,Consolas,monospace;
 }
 [data-theme="light"]{
-  --bg:#FAFAFA;--bg2:#F2F2F4;--card:#FFFFFF;--card2:#F7F7F9;--fg:#111114;--mut:#52525B;--faint:#71717A;
+  --bg:#FAFAFA;--bg2:#F2F2F4;--card:#FFFFFF;--card2:#F7F7F9;--fg:#111114;--mut:#52525B;--faint:#5E5E66;
   --line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.14);--red:#D92D20;--red2:#B42318;--btn:#D92D20;--btn-h:#B42318;
   --glow:rgba(217,45,32,.12);--sh:0 14px 40px rgba(0,0,0,.08);
 }
