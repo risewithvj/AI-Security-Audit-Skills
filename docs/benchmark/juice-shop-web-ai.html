@@ -25,7 +25,7 @@ a{color:var(--red)}
 <p class="sub">Fresh AISA CLI v1.5.1 run vs the same web-AI reports, scored against a <b>mechanically-selected</b> Core 30 / Full 60 answer key. Same rules for every tool. Measured 2026-11-11.</p>
 <div class="note"><b>Core 30 frozen before scoring.</b> The 30 headline challenges were picked mechanically from Juice Shop's own <code>category</code>/<code>tags</code> (OWASP-mapped classes only; puzzles/OSINT/Web3 excluded), then the first 30 by difficulty. Rule + list: <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/tests/benchmark/core30.md">tests/benchmark/core30.md</a>. Per-challenge file/class answer key: <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/tests/benchmark/juice-shop.labels.json">juice-shop.labels.json</a>.</div>
 <div class="note"><b>Two scores, same rules for everyone. Strict</b> counts only the distinct challenges a tool identified by the right file AND the right bug class. <b>Coverage</b> credits a found vulnerability with its sibling challenges in the same file (e.g. one login SQLi finding credits all login challenges). Coverage &ge; Strict for every tool.</div>
-<div class="note"><b>Read honestly:</b> this is <b>not</b> a clean model-vs-model comparison. <b>Claude.ai</b> was <b>partial</b> — about 40 routes and the client-side phase were not reached; it used 31% of the session's usage. <b>Codex</b> used the <i>softer</i> defensive prompt. <b>Gemini 2.5 Pro</b> refused the task (no score). The CLI figure is a <b>fresh</b> v1.5.1 run (not a re-score). <b>Zero false positives</b> across all tools — Juice Shop is vulnerable by design, so there is little to get wrong.</div>
+<div class="note"><b>Read honestly:</b> this is <b>not</b> a clean model-vs-model comparison. <b>Claude.ai</b> was <b>partial</b> — about 40 routes and the client-side phase were not reached; it used 31% of the session's usage. <b>Codex</b> used the <i>softer</i> defensive prompt. <b>Gemini Pro</b> refused the task (no score). The CLI figure is a <b>fresh</b> v1.5.1 run (not a re-score). <b>Zero false positives</b> across all tools on Juice Shop (a deliberately vulnerable app, so this measures precision only on known-vulnerable code).</div>
 <h2>Summary</h2><div class="scroll"><table>
 <tr><th>Tool</th><th>Core / 30 (strict)</th><th>Full / 60 (strict)</th><th>Full / 60 (coverage)</th><th>False positives</th><th>Time</th></tr>
 <tr><td>AISA CLI v1.5.1</td><td class="big">25</td><td class="big">46</td><td class="big">53</td><td>0</td><td>~9 min (fresh run)</td></tr>
@@ -33,7 +33,7 @@ a{color:var(--red)}
 <tr><td>Codex (web)</td><td class="big">11</td><td class="big">23</td><td class="big">46</td><td>0</td><td>18 min</td></tr>
 <tr><td>Claude.ai (web)</td><td class="big">10</td><td class="big">23</td><td class="big">45</td><td>0</td><td>5 min (partial)</td></tr>
 <tr><td><b>Web-AI union</b></td><td class="big">14</td><td class="big">29</td><td class="big">53</td><td>0</td><td>—</td></tr>
-<tr><td>Gemini 2.5 Pro (web)</td><td class="big">—</td><td class="big">—</td><td class="big">—</td><td>—</td><td>refused</td></tr>
+<tr><td>Gemini Pro (web)</td><td class="big">—</td><td class="big">—</td><td class="big">—</td><td>—</td><td>refused</td></tr>
 </table></div>
 <h2>Per-challenge matrix (Full 60, strict)</h2>
 <p class="sub">✓ = tool identified that distinct challenge (right file + right class). The first 30 rows are the frozen <b>Core 30</b>.</p>

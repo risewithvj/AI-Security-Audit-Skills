@@ -318,7 +318,7 @@ Measured against **OWASP Juice Shop** (the reference vulnerable app), `standard`
 
 **Matched (highlights).** SQL injection (login auth-bypass, UNION search), NoSQL `$where` injection (reviews, order tracking, mass review overwrite), JWT forgery via a hardcoded RSA key, unsalted-MD5 password storage, open-redirect allowlist bypass, XXE + file disclosure, YAML-bomb/insecure-deserialization, server-side `eval`/RCE in the B2B order path, SSRF via profile-image URL, DOM/stored/API XSS sinks (`bypassSecurityTrustHtml`), `/ftp` directory listing + confidential docs, `/metrics` exposure, self-register-as-admin mass assignment, poison-null-byte path traversal, free-deluxe payment bypass, forged review/feedback, negative-order business logic, upload size/type bypass, and end-of-life/typosquatted components.
 
-Every confirmed finding carries machine-checked `file:line` evidence re-read from the source, and High/Critical candidates were independently verified by refutation passes before being reported. **Zero false positives** — Juice Shop is vulnerable by design, so there is little to get wrong; a handful of real CLI findings (SSRF, premium/CTF keys, order-history IDOR) fall outside the 60-challenge set and are simply not counted, never penalised.
+Every confirmed finding carries machine-checked `file:line` evidence re-read from the source, and High/Critical candidates were independently verified by refutation passes before being reported. **Zero false positives on Juice Shop** (a deliberately vulnerable app, so this measures precision only on known-vulnerable code); a handful of real CLI findings (SSRF, premium/CTF keys, order-history IDOR) fall outside the 60-challenge set and are simply not counted, never penalised.
 
 ---
 
@@ -332,12 +332,12 @@ The fresh **CLI v1.5.1 run** vs the same web-AI reports on the OWASP Juice Shop 
 | Codex (web) | softer defensive | finished, many nudges | **11** | **23** | **46** | 0 |
 | Claude.ai (web) | full audit | partial — 5 min | **10** | **23** | **45** | 0 |
 | ChatGPT (web) | full audit | finished, 2 nudges | **7** | **18** | **48** | 0 |
-| Gemini 2.5 Pro (web) | full audit, then softer | refused the task | — | — | — | — |
+| Gemini Pro (web) | full audit, then softer | refused the task | — | — | — | — |
 | **Web-AI union** | — | — | **14** | **29** | **53** | **0** |
 
-On the frozen **Core 30** the CLI (25) found **more than twice** any single web AI (7–11) and **more than all three combined** (14). On exact **Full-60** matches the CLI (46) beats the **web union** (29). On the looser **coverage** metric the field is close (CLI 53 vs 45–48 each, web union 53) — so the engine's real edge is **precision and completeness**, not reaching bugs the web AIs cannot. **Zero false positives** across every tool: Juice Shop is vulnerable by design, so there is little to get wrong, and real findings outside the 60 labels are not counted, never penalised.
+On the frozen **Core 30** the CLI (25) found **more than twice** any single web AI (7–11) and **more than all three combined** (14). On exact **Full-60** matches the CLI (46) beats the **web union** (29). On the looser **coverage** metric the field is close (CLI 53 vs 45–48 each, web union 53) — so the engine's real edge is **precision and completeness**, not reaching bugs the web AIs cannot. **Zero false positives** across every tool on Juice Shop (a deliberately vulnerable app, so this measures precision only on known-vulnerable code); real findings outside the 60 labels are not counted, never penalised.
 
-**Read honestly — this is *not* a clean model-vs-model comparison.** **Claude.ai** was **partial**: about 40 routes and the client-side phase were not reached; it used **31% of the session's usage**. **Codex** used the **softer defensive** prompt, not the full one. **Gemini 2.5 Pro** refused the task. The CLI figure is a **fresh** v1.5.1 run.
+**Read honestly — this is *not* a clean model-vs-model comparison.** **Claude.ai** was **partial**: about 40 routes and the client-side phase were not reached; it used **31% of the session's usage**. **Codex** used the **softer defensive** prompt, not the full one. **Gemini Pro** refused the task. The CLI figure is a **fresh** v1.5.1 run.
 
 **➡️ Full scorecard** — per-challenge matrix (all 60) and the Core 30 rule: [juice-shop-web-ai.html](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/juice-shop-web-ai.html) · one-page [executive-scorecard.pdf](https://risewithvj.github.io/AI-Security-Audit-Skills/benchmark/executive-scorecard.pdf).
 
@@ -357,7 +357,7 @@ Measured on the **fresh** OWASP Juice Shop run (source-only, v1.5.1 auto default
 | | Result |
 |---|---|
 | Auto profile chosen | **standard** (1,459 source files; jwt, llm, uploads signals) |
-| Detection | **25 / 30 Core**, **46 / 60 Full strict**, **53 / 60 coverage**, **0% false positives** |
+| Detection | **25 / 30 Core**, **46 / 60 Full strict**, **53 / 60 coverage**, **0% false positives on Juice Shop** (deliberately vulnerable app — precision only on known-vulnerable code) |
 | Engine phases (wall) | doctor 18 s · init 1.2 s · scan **179 s** · normalize 0.1 s · PII 22 s — ~3.7 min engine |
 | End-to-end | ~9 min including the AI hunt + verify phases |
 
