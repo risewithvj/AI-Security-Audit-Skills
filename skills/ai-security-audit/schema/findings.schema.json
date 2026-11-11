@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/risewithvj/AI-Security-Audit-Skills/schema/findings.schema.json",
+  "$comment": "AI-Security-Audit-Skills | Author: Vijaya Kumar L (Rise With VJ) | https://github.com/risewithvj | https://www.linkedin.com/in/vijayakumarl/ | MIT",
+  "title": "AI-Security-Audit-Skills findings file",
+  "type": "object",
+  "required": ["schema_version", "run_id", "framework", "findings"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "framework": {"enum": ["security", "dpdp"]},
+    "generated_at": {"type": "string"},
+    "overall_risk": {"enum": ["Critical", "High", "Medium", "Low", "Info", "None"]},
+    "executive_summary": {"type": "string"},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}}
+  },
+  "$defs": {
+    "traceStep": {
+      "type": "object",
+      "required": ["file", "line", "snippet"],
+      "properties": {
+        "file": {"type": "string", "description": "Path relative to the target root, forward slashes"},
+        "line": {"type": "integer", "minimum": 1},
+        "snippet": {"type": "string", "minLength": 1, "description": "Exact code on that line, whitespace trimmed"},
+        "note": {"type": "string"}
+      }
+    },
+    "plain": {
+      "type": "object",
+      "required": ["what_this_is", "problem", "fix", "if_we_skip"],
+      "properties": {
+        "what_this_is": {"type": "string"},
+        "problem": {"type": "string"},
+        "fix": {"type": "string"},
+        "if_we_skip": {"type": "string"}
+      }
+    },
+    "votes": {
+      "type": "object",
+      "properties": {
+        "confirmed": {"type": "integer", "minimum": 0},
+        "needs_validation": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0},
+        "dissent": {"type": "string"}
+      }
+    },
+    "dpdp": {
+      "type": "object",
+      "required": ["obligation"],
+      "properties": {
+        "obligation": {"type": "string", "description": "e.g. Notice, Consent, Security safeguards, Breach intimation, Erasure, Children's data"},
+        "act_sections": {"type": "array", "items": {"type": "string"}},
+        "rules": {"type": "array", "items": {"type": "string"}},
+        "data_types": {"type": "array", "items": {"type": "string"}},
+        "gap_type": {"enum": ["missing", "partial", "incorrect", "unverifiable"]}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id", "verdict", "title", "class"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(F|V|R)-[0-9]{2,3}$"},
+        "verdict": {"enum": ["confirmed", "needs_validation", "rejected"]},
+        "title": {"type": "string", "minLength": 5},
+        "class": {"type": "string"},
+        "location": {"type": "string"},
+        "plain": {"$ref": "#/$defs/plain"},
+        "description": {"type": "string"},
+        "attacker": {"type": "string"},
+        "control": {"type": "string"},
+        "intended_rule": {"type": "string"},
+        "trace": {"type": "array", "items": {"$ref": "#/$defs/traceStep"}},
+        "affected_locations": {"type": "array", "items": {"$ref": "#/$defs/traceStep"}},
+        "missing_check": {"type": "string"},
+        "result": {"type": "string"},
+        "cwe": {"type": "array", "items": {"type": "string", "pattern": "^CWE-[0-9]+$"}},
+        "owasp": {"type": "array", "items": {"type": "string"}},
+        "merged_from": {"type": "array", "items": {"type": "string"}},
+        "ledger_units": {"type": "array", "items": {"type": "string"}},
+        "votes": {"$ref": "#/$defs/votes"},
+        "severity": {"enum": ["Critical", "High", "Medium", "Low", "Info"]},
+        "cvss": {
+          "description": "Required for framework security (checked by aisa validate); optional for dpdp",
+          "type": "object",
+          "required": ["vector", "score"],
+          "properties": {
+            "vector": {"type": "string", "pattern": "^CVSS:4\\.0/"},
+            "score": {"type": "number", "minimum": 0, "maximum": 10}
+          }
+        },
+        "severity_rationale": {"type": "string", "description": "Required when severity is one band above the CVSS band: why (data sensitivity, scale)"},
+        "confidence": {"enum": ["High", "Medium"]},
+        "business_impact": {"type": "string"},
+        "root_cause": {"type": "string"},
+        "recommendation": {
+          "type": "object",
+          "required": ["summary", "production_risk"],
+          "properties": {
+            "summary": {"type": "string"},
+            "code_example": {"type": "string"},
+            "files_to_change": {"type": "array", "items": {"type": "string"}},
+            "production_risk": {"type": "string"}
+          }
+        },
+        "regression_test": {"type": "string"},
+        "references": {"type": "array", "items": {"type": "string"}},
+        "regulation": {"type": "array", "items": {"type": "string"}},
+        "missing_fact": {"type": "string"},
+        "why_verification": {"type": "string"},
+        "safe_check": {"type": "string"},
+        "potential_impact": {"type": "string"},
+        "reason": {"type": "string"},
+        "dpdp": {"$ref": "#/$defs/dpdp"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"verdict": {"const": "confirmed"}}},
+          "then": {
+            "required": ["plain", "description", "trace", "result", "cwe", "severity", "confidence", "business_impact", "root_cause", "recommendation", "regression_test"],
+            "properties": {"id": {"pattern": "^F-"}, "trace": {"minItems": 1}}
+          }
+        },
+        {
+          "if": {"properties": {"verdict": {"const": "needs_validation"}}},
+          "then": {
+            "required": ["description", "trace", "missing_fact", "why_verification", "safe_check"],
+            "properties": {"id": {"pattern": "^V-"}},
+            "not": {"anyOf": [{"required": ["severity"]}, {"required": ["cvss"]}]}
+          }
+        },
+        {
+          "if": {"properties": {"verdict": {"const": "rejected"}}},
+          "then": {
+            "required": ["reason"],
+            "properties": {"id": {"pattern": "^R-"}},
+            "not": {"anyOf": [{"required": ["severity"]}, {"required": ["cvss"]}]}
+          }
+        }
+      ]
+    }
+  }
+}
