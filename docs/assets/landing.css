@@ -59,6 +59,7 @@ p{margin:0}
 .nav{display:flex;align-items:center;gap:2px;margin-left:auto}
 .nav>a,.dd-btn{color:var(--mut);font-size:14.5px;font-weight:550;padding:8px 11px;border-radius:9px;text-decoration:none!important;background:none;border:0;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px}
 .nav>a:hover,.nav>a.active,.dd-btn:hover{color:var(--fg);background:var(--card2)}
+.nav>a.nav-cta{display:none}
 .dd{position:relative}
 .dd-btn svg{width:12px;height:12px}
 .dd-menu{position:absolute;right:0;top:calc(100% + 8px);width:290px;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:8px;box-shadow:var(--sh);opacity:0;visibility:hidden;transform:translateY(-6px);transition:.16s}
@@ -341,6 +342,9 @@ details p{padding:0 22px 20px;color:var(--mut);font-size:15px}
   .brand small{display:none}
   .gh{display:none}
   .hdr-in{gap:12px}
+  .nav>a.nav-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;font-weight:700;color:var(--fg);background:var(--card2);border:1px solid var(--line2)}
+  .nav>a.nav-cta:not(.issue){margin-top:14px}
+  .nav>a.nav-cta.issue{background:var(--btn);border-color:var(--btn);color:#fff}
   .cta .btn{flex:1 1 100%}
   .out-act{width:100%}.out-act .btn{flex:1}
 }
