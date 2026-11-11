@@ -1,243 +1,407 @@
 <!doctype html>
-<!-- AI-Security-Audit-Skills | Vijaya Kumar L (Rise With VJ) | github.com/risewithvj | MIT -->
+<!-- AI-Security-Audit-Skills | Vijaya Kumar L (Rise With VJ) | github.com/risewithvj | linkedin.com/in/vijayakumarl | MIT -->
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Security + DPDP Audit — one prompt, any AI | Rise With VJ</title>
-<meta name="description" content="Proof-backed source-code security + India DPDP audit you run inside any AI, or as a Claude Code CLI. Every finding carries file-and-line evidence; recommendations only — your code is never modified or sent anywhere by the prompt.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI-Security-Audit-Skills: Proof-backed VAPT + India DPDP audit for any AI | Rise With VJ</title>
+<meta name="description" content="Free, open-source security VAPT and India DPDP Act audit for your source code. Run it in ChatGPT, Claude.ai or Codex with one prompt, or as a Claude Code CLI. Every finding has file-and-line proof. Recommendations only.">
+<meta name="keywords" content="AI security audit, VAPT, DPDP Act 2023, DPDP Rules 2025, source code review, OWASP Top 10 2025, Claude Code skill, vibe coding security, appsec">
+<meta name="author" content="Vijaya Kumar L (Rise With VJ)">
 <link rel="canonical" href="https://risewithvj.github.io/AI-Security-Audit-Skills/">
-<meta name="theme-color" content="#0A0A0A">
+<meta name="theme-color" content="#0A0A0B">
 <meta name="color-scheme" content="dark light">
-
-<!-- Open Graph / Twitter -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI-Security-Audit-Skills">
-<meta property="og:title" content="AI Security + DPDP Audit — one prompt, any AI">
-<meta property="og:description" content="Proof-backed source-code security + DPDP audit. Run it in any AI with one prompt, or as a Claude Code CLI. File-and-line evidence; recommendations only.">
+<meta property="og:title" content="Proof-backed AI security + DPDP audit. Free, any AI.">
+<meta property="og:description" content="One prompt for ChatGPT, Claude.ai or Codex, or a full Claude Code CLI. Core 25/30 on OWASP Juice Shop. File-and-line proof for every finding.">
 <meta property="og:url" content="https://risewithvj.github.io/AI-Security-Audit-Skills/">
 <meta property="og:image" content="https://risewithvj.github.io/AI-Security-Audit-Skills/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AI Security + DPDP Audit — one prompt, any AI">
-<meta name="twitter:description" content="Proof-backed source-code security + DPDP audit. Run it in any AI, or as a Claude Code CLI.">
+<meta name="twitter:title" content="Proof-backed AI security + DPDP audit. Free, any AI.">
+<meta name="twitter:description" content="One prompt for any AI, or a full Claude Code CLI. File-and-line proof for every finding.">
 <meta name="twitter:image" content="https://risewithvj.github.io/AI-Security-Audit-Skills/assets/og-cover.png">
-
 <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-<link rel="dns-prefetch" href="https://www.google-analytics.com">
-<link rel="preload" href="assets/site.css" as="style">
+<link rel="dns-prefetch" href="https://api.github.com">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/site.css">
-
+<link rel="stylesheet" href="assets/landing.css">
+<script>try{var t=localStorage.getItem("aisa-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "AI-Security-Audit-Skills",
-  "applicationCategory": "SecurityApplication",
-  "operatingSystem": "Windows, macOS, Linux",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Proof-backed source-code security and India DPDP audit you run inside any AI with one prompt, or as a Claude Code CLI. Every confirmed finding carries file-and-line evidence; recommendations only, the target code is never modified.",
-  "url": "https://risewithvj.github.io/AI-Security-Audit-Skills/",
-  "license": "https://opensource.org/licenses/MIT",
-  "author": { "@type": "Person", "name": "Vijaya Kumar L", "alternateName": "Rise With VJ", "url": "https://www.linkedin.com/in/vijayakumarl/" },
-  "codeRepository": "https://github.com/risewithvj/AI-Security-Audit-Skills"
-}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AI-Security-Audit-Skills","applicationCategory":"SecurityApplication","operatingSystem":"Windows, macOS, Linux, any web AI","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"softwareVersion":"1.6.0","license":"https://opensource.org/licenses/MIT","url":"https://risewithvj.github.io/AI-Security-Audit-Skills/","codeRepository":"https://github.com/risewithvj/AI-Security-Audit-Skills","author":{"@type":"Person","name":"Vijaya Kumar L","alternateName":"Rise With VJ","url":"https://github.com/risewithvj","sameAs":["https://www.linkedin.com/in/vijayakumarl/"]},"description":"Proof-backed source-code security (VAPT) and India DPDP Act audit you run in any AI or as a Claude Code CLI."}
 </script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<!-- NAV -->
-<nav class="nav" aria-label="Primary">
-  <div class="nav-in">
-    <a class="logo" href="#top" aria-label="AI-Security-Audit-Skills home">
-      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l12 5v8c0 7-5 12-12 15C9 27 4 22 4 15V7z" fill="none" stroke="#FF2A1F" stroke-width="2.4" stroke-linejoin="round"/><path d="M11 16l3.5 3.5L21 12" fill="none" stroke="#FF2A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>AI Security Audit<small>Rise With VJ</small></span>
+<!-- ========== HEADER ========== -->
+<header class="hdr" id="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="#top" aria-label="AI-Security-Audit-Skills home">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.2 5 13.4 12 15 7-1.6 12-7.8 12-15V7L16 2Z" fill="var(--red)"/><path d="m11 16 3.5 3.5L21.5 12" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><b>AI-Security-Audit</b><small>by Rise With VJ</small></span>
     </a>
-    <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">☰</button>
-    <div class="nav-links" id="nav-links">
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#how">How it works</a>
       <a href="#prompts">Prompts</a>
-      <a href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">Scorecard</a>
-      <a href="https://risewithvj.github.io/AI-Security-Audit-Skills/web/v1/runbook.md">Docs</a>
-      <a href="#cli">Skills</a>
-      <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/releases">Releases</a>
-      <a class="gh-star" href="https://github.com/risewithvj/AI-Security-Audit-Skills" data-event="github_click" aria-label="Star on GitHub">★ <span class="count" id="star-count">GitHub</span></a>
-      <a class="btn-issue" href="https://github.com/risewithvj/AI-Security-Audit-Skills/issues/new/choose" data-event="issue_click">Report an issue</a>
-      <button class="theme-btn" id="theme-btn" aria-label="Toggle theme" type="button">☀</button>
+      <a href="#dpdp">DPDP</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#reports">Reports</a>
+      <a href="#roadmap">Roadmap</a>
+      <div class="dd">
+        <button class="dd-btn" type="button" aria-expanded="false" aria-haspopup="true">Docs <svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="dd-menu" role="menu">
+          <a role="menuitem" href="web/v1/runbook.md" target="_blank" rel="noopener"><b>Web runbook</b><span>What the AI follows</span></a>
+          <a role="menuitem" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/START.md" target="_blank" rel="noopener"><b>CLI quick start</b><span>START.md</span></a>
+          <a role="menuitem" href="https://github.com/risewithvj/AI-Security-Audit-Skills/tree/main/skills/ai-security-audit" target="_blank" rel="noopener"><b>Security skill</b><span>Phases, rules, checklists</span></a>
+          <a role="menuitem" href="https://github.com/risewithvj/AI-Security-Audit-Skills/tree/main/skills/ai-dpdp-audit" target="_blank" rel="noopener"><b>DPDP skill</b><span>Obligations G1–G12</span></a>
+          <a role="menuitem" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><b>Changelog</b><span>Every release</span></a>
+          <a role="menuitem" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/SECURITY.md" target="_blank" rel="noopener"><b>Security policy</b><span>Report a vulnerability</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="hdr-act">
+      <a class="gh" href="https://github.com/risewithvj/AI-Security-Audit-Skills" target="_blank" rel="noopener" data-event="github_click" aria-label="Star on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span>Star</span><em id="stars">★</em>
+      </a>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch light or dark theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg></button>
+      <button class="icon-btn burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
     </div>
-  </div>
-</nav>
-
-<main id="main">
-<span id="top"></span>
-
-<!-- HERO -->
-<header class="hero wrap">
-  <span class="eyebrow">Proof-backed · <b>recommendations only</b> · your code never leaves the AI</span>
-  <h1>Security &amp; DPDP audits,<br><span class="accent">one prompt, any AI.</span></h1>
-  <p class="promise">Upload your project zip, paste one prompt, and get a source-code security + India DPDP review where every finding carries a file and a line — or run the same engine as a Claude Code CLI.</p>
-  <div class="cta">
-    <a class="btn btn-primary" href="#prompts">Get your prompt</a>
-    <a class="btn btn-ghost" href="#cli">Install for Claude Code</a>
-  </div>
-  <div class="stats">
-    <a class="stat" href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">
-      <span class="big">25/30</span><span class="lbl">Core bugs found by the CLI on Juice Shop</span>
-    </a>
-    <a class="stat" href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">
-      <span class="big">0</span><span class="lbl">False positives on Juice Shop (precision only on known-vulnerable code)</span>
-    </a>
-    <a class="stat" href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">
-      <span class="big">4</span><span class="lbl">AIs benchmarked side by side</span>
-    </a>
   </div>
 </header>
 
-<!-- HOW IT WORKS -->
-<section class="wrap center" id="how">
-  <h2 class="section-h">How it works</h2>
-  <p class="section-sub">Three steps. No install for the web version; nothing runs on your machine.</p>
-  <div class="grid g3 steps">
-    <div class="glass step"><span class="num">1</span>
-      <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v10a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h5l2 3h7a2 2 0 012 2z"/><path d="M12 11v6M9 14h6"/></svg></span>
-      <h3>Zip your source</h3><p>Compress your project folder (drop <code>.git</code>, <code>node_modules</code>, builds — never <code>.env</code>).</p>
-    </div>
-    <div class="glass step"><span class="num">2</span>
-      <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2M9 12h6M9 16h6"/></svg></span>
-      <h3>Paste one prompt</h3><p>Pick Lite, Pro, God or Deep below, copy it, and send it with your zip to any AI.</p>
-    </div>
-    <div class="glass step"><span class="num">3</span>
-      <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/></svg></span>
-      <h3>Get a proof-backed report</h3><p>Vulnerabilities with file + line + fix, hardening notes, and an honest "Not checked" list.</p>
-    </div>
-  </div>
-</section>
-
-<!-- PROMPT PICKER -->
-<section class="wrap" id="prompts">
-  <h2 class="section-h">Get your prompt</h2>
-  <p class="section-sub">Prompts render instantly — pick a tier, then copy the prompt for your stack. Nothing is sent anywhere; the audit runs inside the AI you already use.</p>
-
-  <div class="tabs" role="tablist" aria-label="Prompt tier">
-    <button class="tab" role="tab" data-mode="lite" tabindex="0" aria-selected="false">Lite — free AIs</button>
-    <button class="tab" role="tab" data-mode="pro" tabindex="0" aria-selected="true">Pro — paid AIs</button>
-    <button class="tab" role="tab" data-mode="god" tabindex="0" aria-selected="false">God — deepest single pass</button>
-    <button class="tab" role="tab" data-mode="deep" tabindex="0" aria-selected="false">Deep — 4-pass</button>
-  </div>
-
-  <div class="glass picker-top" id="picker-top">
-    <div class="ph">
-      <span class="meta">Prompt · MODE=<b id="picker-mode">pro</b> · TYPE=<b id="picker-type">auto</b></span>
-      <button class="copy" id="picker-copy" type="button" data-event="prompt_copy" data-p-mode="pro" data-p-type="auto">Copy prompt</button>
-    </div>
-    <pre class="prompt" id="picker-pre"></pre>
-  </div>
-
-  <div class="grid g3" id="cat-grid"></div>
-  <div class="grid" id="deep-grid" style="display:none"></div>
-</section>
-
-<!-- WHICH AI -->
-<section class="wrap" id="which-ai">
-  <h2 class="section-h">Which AI works best</h2>
-  <p class="section-sub">From our fresh v1.5.1 benchmark on OWASP Juice Shop, scored against a mechanically-frozen Core 30. Honest caveats included — this is not a clean model-vs-model test. <a href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">Full scorecard →</a></p>
-  <div class="tblwrap glass">
-    <table>
-      <thead><tr><th>Tool</th><th>Core / 30</th><th>Full / 60 (strict)</th><th>Honest note</th></tr></thead>
-      <tbody>
-        <tr><td><b>AISA CLI</b> (this engine)</td><td><span class="win">25</span></td><td><span class="win">46</span></td><td class="note-cell">Fresh run; beats all web AIs combined.</td></tr>
-        <tr><td>Codex (web)</td><td>11</td><td>23</td><td class="note-cell">Used the softer defensive prompt.</td></tr>
-        <tr><td>Claude.ai (web)</td><td>10</td><td>23</td><td class="note-cell">Partial — ~40 routes, client-side not reached, 31% of session usage.</td></tr>
-        <tr><td>ChatGPT (web)</td><td>7</td><td>18</td><td class="note-cell">Finished with 2 nudges.</td></tr>
-        <tr><td>Gemini Pro (web)</td><td>—</td><td>—</td><td class="note-cell">Refused the task.</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="section-sub" style="margin-top:14px">0 false positives across every tool — on Juice Shop (a deliberately vulnerable app, so this measures precision only on known-vulnerable code).</p>
-</section>
-
-<!-- CLI -->
-<section class="wrap" id="cli">
-  <h2 class="section-h">Run it in Claude Code (CLI)</h2>
-  <p class="section-sub">Install the skills once, then just ask Claude Code to audit the current project. Machine-checked file:line evidence, read-only, target code never modified.</p>
-
-  <div class="os-h"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5l8-1v7H3zM13 3.8L21 3v9h-8zM3 13h8v6l-8-1zM13 13h8v8l-8-1z"/></svg> Windows (PowerShell)</div>
-  <div class="code-row">
-    <code>git clone https://github.com/risewithvj/AI-Security-Audit-Skills; powershell -ExecutionPolicy Bypass -File .\AI-Security-Audit-Skills\install\install.ps1</code>
-    <button class="copy sm" type="button" data-event="install_copy" data-p-os="windows" data-copy="git clone https://github.com/risewithvj/AI-Security-Audit-Skills; powershell -ExecutionPolicy Bypass -File .\AI-Security-Audit-Skills\install\install.ps1">Copy</button>
-  </div>
-  <div class="os-h"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 3c0 2-1.6 3.8-3.4 3.7C12.4 4.8 14 3 16 3zM19 17c-.6 1.4-1.3 2.8-2.4 2.8-1 0-1.4-.7-2.6-.7s-1.7.7-2.7.7C8 19.8 6 16 6 12.8 6 9.6 8 8 10 8c1.1 0 2 .7 2.7.7.6 0 1.7-.8 3-.7 1 0 2.3.4 3 1.6-2.6 1.5-2.2 5.2 0 6.4z"/></svg> macOS / Linux (bash)</div>
-  <div class="code-row">
-    <code>git clone https://github.com/risewithvj/AI-Security-Audit-Skills &amp;&amp; bash AI-Security-Audit-Skills/install/install.sh</code>
-    <button class="copy sm" type="button" data-event="install_copy" data-p-os="mac" data-copy="git clone https://github.com/risewithvj/AI-Security-Audit-Skills && bash AI-Security-Audit-Skills/install/install.sh">Copy</button>
-  </div>
-  <p class="section-sub" style="margin-top:12px">Add <code>-WithScanners</code> (PowerShell) or <code>--with-scanners</code> (bash) to bundle Semgrep + Gitleaks. No install at all? See <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/START.md">START.md</a> · <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/skills/ai-security-audit/SKILL.md">skills docs</a>.</p>
-</section>
-
-<!-- RESOURCES -->
-<section class="wrap" id="resources">
-  <h2 class="section-h">Resources</h2>
-  <p class="section-sub">Everything, one grid.</p>
-  <div class="grid g4">
-    <a class="glass res" href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open"><span class="ic">📊</span><h3>Scorecard</h3><p>Per-challenge benchmark matrix.</p></a>
-    <a class="glass res" href="benchmark/executive-scorecard.pdf" data-event="pdf_download"><span class="ic">📄</span><h3>Executive PDF</h3><p>One-page, print-ready summary.</p></a>
-    <a class="glass res" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/examples/sample-security-audit-report.pdf"><span class="ic">🧾</span><h3>Sample report</h3><p>A real Juice Shop audit output.</p></a>
-    <a class="glass res" href="https://risewithvj.github.io/AI-Security-Audit-Skills/web/v1/runbook.md"><span class="ic">📘</span><h3>Runbook</h3><p>The exact audit the prompt drives.</p></a>
-    <a class="glass res" href="https://github.com/risewithvj/AI-Security-Audit-Skills/tree/main/skills"><span class="ic">🧩</span><h3>Skills</h3><p>Security + DPDP skill source.</p></a>
-    <a class="glass res" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/CHANGELOG.md"><span class="ic">🗒️</span><h3>Changelog</h3><p>What changed, version by version.</p></a>
-    <a class="glass res" href="https://github.com/risewithvj/AI-Security-Audit-Skills/releases"><span class="ic">🏷️</span><h3>Releases</h3><p>Download a tagged version.</p></a>
-    <a class="glass res" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/SECURITY.md"><span class="ic">🛡️</span><h3>Security policy</h3><p>How to report a vulnerability.</p></a>
-    <a class="glass res" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/CONTRIBUTING.md"><span class="ic">🤝</span><h3>Contributing</h3><p>Add a stack, fix a rule.</p></a>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="wrap" id="faq">
-  <h2 class="section-h">FAQ</h2>
-  <div class="faq">
-    <details><summary>Is my code safe?</summary><div class="fa-body">Yes. The audit is read-only and recommendations only — it never modifies your code. The web prompt runs inside the AI you already use; this page itself runs no code on your source and sends it nowhere. Strip <code>.env</code> and real secrets before zipping, as a habit.</div></details>
-    <details><summary>What is DPDP?</summary><div class="fa-body">India's Digital Personal Data Protection Act, 2023 (with the DPDP Rules, 2025). The DPDP pass maps where personal data is collected, stored, logged, shared, retained and erased, and checks notice, consent, security safeguards, breach readiness, retention/erasure, data-principal rights, children's data and cross-border transfer — against your actual code.</div></details>
-    <details><summary>Free vs paid AI — which do I use?</summary><div class="fa-body">Free or smaller AIs get <b>Lite</b>: top risks in a one-page report that fits a tight context. Paid tiers (Plus / Pro / Advanced / Max / Ultra) can hold the whole zip and run the full <b>Pro</b> audit, with <b>God</b> and the <b>Deep 4-pass</b> for the most thorough review.</div></details>
-    <details><summary>Why zero false positives?</summary><div class="fa-body">The benchmark target, OWASP Juice Shop, is deliberately vulnerable — so there is little to falsely claim, and "0 false positives" there measures precision only on known-vulnerable code, not real-world noise. Every confirmed finding still must carry file-and-line proof before it is reported.</div></details>
-    <details><summary>Does it fix my code?</summary><div class="fa-body">No. It is recommendations only. You get the smallest safe fix described for each finding, but nothing in your project is changed, formatted, committed or installed into.</div></details>
-    <details><summary>Which AI is best?</summary><div class="fa-body">In our benchmark the AISA CLI engine led by a wide margin (Core 25/30). Among web AIs, Codex and Claude.ai edged out ChatGPT, and Gemini Pro refused — but the web runs were not apples-to-apples (partial runs, softer prompt). See the <a href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">scorecard</a> for the honest detail.</div></details>
-    <details><summary>Does this page track me?</summary><div class="fa-body">Only anonymous usage, and only if you allow it. We use Google Tag Manager with Consent Mode v2: every storage signal starts denied, so no analytics cookie is set until you click Accept. We then record which prompts/links you click — never your audit content — and advertising signals stay denied. Click Decline to keep it all off. Details in <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/docs/ANALYTICS.md">ANALYTICS.md</a>.</div></details>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="wrap foot-in">
-    <div>
-      <div class="foot-links">
-        <a href="https://github.com/risewithvj/AI-Security-Audit-Skills" data-event="github_click">GitHub</a>
-        <a href="https://www.linkedin.com/in/vijayakumarl/">LinkedIn</a>
-        <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/issues/new/choose" data-event="issue_click">Issues</a>
-        <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/releases">Releases</a>
-        <a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/LICENSE">MIT License</a>
+<main id="main">
+<!-- ========== HERO ========== -->
+<section class="hero" id="top">
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <a class="pill" href="https://github.com/risewithvj/AI-Security-Audit-Skills/releases/latest" target="_blank" rel="noopener"><span class="dot"></span> v1.6.0 is live · Free &amp; open source <b>→</b></a>
+      <h1>Find the holes in your app <span class="grad">before attackers do.</span></h1>
+      <p class="lead">A proof-backed security VAPT and India DPDP audit for your source code. Use one prompt in ChatGPT, Claude.ai or Codex, or run the full pipeline in Claude Code. <b>No proof, no finding.</b> Recommendations only, your code is never changed.</p>
+      <div class="cta">
+        <a class="btn primary" href="#prompts">Get your free prompt</a>
+        <a class="btn ghost" href="#cli">Install for Claude Code</a>
       </div>
-      <p class="priv">No audit code runs on this page and your source is sent nowhere by the prompt. We use Google Tag Manager with Consent Mode v2: all storage starts <b>denied</b>, so no analytics cookie is set until you click <b>Accept</b>. We then measure anonymous usage only — which prompts are copied, install/scorecard/PDF/GitHub/issue clicks — never your audit content. Advertising signals stay denied. Click <b>Decline</b> to keep everything off.</p>
+      <ul class="ticks">
+        <li>File + line proof on every finding</li>
+        <li>OWASP Top 10:2025 · API · LLM</li>
+        <li>DPDP Act 2023 + Rules 2025</li>
+      </ul>
     </div>
-    <div>Built by <b>Rise With VJ</b> — Vijaya Kumar L</div>
+    <div class="hero-vis" aria-hidden="true">
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>audit-report · juice-shop</span></div>
+        <div class="term-body">
+          <div class="f crit"><span class="sev">CRITICAL</span><b>SQL injection in login</b><code>routes/login.ts:34</code><p>Attacker: anonymous → Result: logs in as any user</p><em>✓ verified 3/3 · CVSS 4.0</em></div>
+          <div class="f high"><span class="sev">HIGH</span><b>Basket IDOR, no owner check</b><code>routes/basket.ts:18</code><p>Attacker: any customer → Result: reads others' carts</p><em>✓ verified 3/3</em></div>
+          <div class="f dpdp"><span class="sev">DPDP</span><b>Erasure request never erases</b><code>routes/dataErasure.ts:83</code><p>s.8(7) · Rule 8 · personal data retained</p><em>✓ evidence gated</em></div>
+          <div class="f nc"><span class="sev">NOT CHECKED</span><b>Live deployment, TLS, IAM</b><p>Always listed. Nothing hidden.</p></div>
+        </div>
+      </div>
+    </div>
   </div>
-</footer>
+  <div class="wrap stats">
+    <a class="stat" href="#benchmark"><b data-count="25">25</b><span>/30</span><small>Core OWASP score (CLI)</small></a>
+    <a class="stat" href="#benchmark"><b>2×+</b><small>more than any single web AI</small></a>
+    <a class="stat" href="#benchmark"><b data-count="0">0</b><small>false positives on Juice Shop</small></a>
+    <a class="stat" href="#prompts"><b data-count="11">11</b><small>app types, 4 depth levels</small></a>
+  </div>
+</section>
 
-<!-- Consent banner (hidden unless an analytics ID is set) -->
-<div class="consent" id="consent" role="dialog" aria-live="polite" aria-label="Analytics consent">
-  <p>We use anonymous usage analytics (which prompts and links you click — never your audit content) to improve this page. Under Consent Mode v2 all storage stays denied until you accept; advertising signals are never enabled.</p>
-  <div class="row">
-    <button class="decline" type="button">Decline</button>
-    <button class="accept" type="button">Accept</button>
+<!-- ========== TRUST STRIP ========== -->
+<div class="strip" aria-label="Standards covered">
+  <div class="wrap strip-in">
+    <span>Mapped to</span><b>OWASP Top 10:2025</b><b>OWASP API Top 10</b><b>OWASP LLM Top 10</b><b>CVSS 4.0</b><b>CWE</b><b>DPDP Act 2023</b><b>DPDP Rules 2025</b>
   </div>
 </div>
 
+<!-- ========== HOW IT WORKS ========== -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <p class="eyebrow">How it works</p>
+    <h2>Two ways to run it. Same evidence rules.</h2>
+    <div class="paths">
+      <article class="card path">
+        <div class="path-hd"><span class="tag">Web AI · no install</span><h3>3 steps, 2 minutes</h3></div>
+        <ol class="steps">
+          <li><b>Zip your project</b><span>Drop .git, node_modules, builds. <em>Never include .env files.</em></span></li>
+          <li><b>Copy a prompt below</b><span>Pick your app type and depth.</span></li>
+          <li><b>Upload + paste</b><span>In ChatGPT, Claude.ai or Codex. Get a report with proof and fixes.</span></li>
+        </ol>
+        <a class="btn primary sm" href="#prompts">Choose a prompt</a>
+      </article>
+      <article class="card path">
+        <div class="path-hd"><span class="tag red">Claude Code CLI · deepest</span><h3>6-phase audit pipeline</h3></div>
+        <ol class="pipe">
+          <li><i>0</i><b>Scope gate</b><span>What's in, what's out</span></li>
+          <li><i>1</i><b>Recon map</b><span>Stack, routes, data flows, PII</span></li>
+          <li><i>2</i><b>Scanners</b><span>Semgrep · Gitleaks · Trivy · OSV</span></li>
+          <li><i>3</i><b>Hunters</b><span>Focused agents per risk area</span></li>
+          <li><i>4</i><b>Verify</b><span>Independent votes + line re-read</span></li>
+          <li><i>5</i><b>Report</b><span>DOCX + PDF, CVSS 4.0</span></li>
+        </ol>
+        <a class="btn ghost sm" href="#cli">Install the CLI</a>
+      </article>
+    </div>
+    <div class="gate card">
+      <div><h3>The evidence gate: why there's no noise</h3>
+      <p>A finding is reported only when all six boxes are filled. Anything less goes to "Needs check" or "Hardening notes", never dressed up as a vulnerability.</p></div>
+      <ul class="six">
+        <li><b>1</b>Who is the attacker</li><li><b>2</b>What they control</li><li><b>3</b>The rule that should stop them</li><li><b>4</b>The exact path (file:line)</li><li><b>5</b>The missing check</li><li><b>6</b>The real result</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROMPT STUDIO ========== -->
+<section class="sec alt" id="prompts">
+  <div class="wrap">
+    <p class="eyebrow">Prompt studio</p>
+    <h2>Get the right prompt in 2 clicks</h2>
+    <p class="sub">Pick what you built and how deep to go. Copy, then paste it into your AI along with your zip.</p>
+
+    <div class="studio card">
+      <div class="studio-l">
+        <p class="lbl">1 · What did you build?</p>
+        <div class="chips" id="types" role="radiogroup" aria-label="App type"></div>
+        <p class="lbl">2 · How deep?</p>
+        <div class="tabs" id="modes" role="tablist" aria-label="Depth">
+          <button role="tab" data-mode="lite">Lite<small>Free AIs</small></button>
+          <button role="tab" data-mode="pro">Pro<small>Paid AIs</small></button>
+          <button role="tab" data-mode="god">God Mode<small>Deepest, 1 go</small></button>
+          <button role="tab" data-mode="deep">Deep 4-pass<small>Best coverage</small></button>
+        </div>
+        <p class="mode-note" id="mode-note"></p>
+        <label class="lbl" for="pname">3 · Your name on the report <span>(optional)</span></label>
+        <input id="pname" type="text" placeholder="e.g. Priya, Acme Labs" maxlength="60" autocomplete="off">
+      </div>
+      <div class="studio-r">
+        <div class="out-hd"><b id="out-title">Prompt</b><div class="out-act"><button class="btn sm ghost" id="dl" type="button">Download .txt</button><button class="btn sm primary copy" id="copy" type="button" data-event="prompt_copy">Copy prompt</button></div></div>
+        <div id="out"><pre class="prompt" id="prompt" tabindex="0">Loading prompts…</pre></div>
+        <p class="hint">AI can't open links? Use the paste-in versions: <a href="web/v1/paste-prompt-lite.txt" target="_blank" rel="noopener">Lite</a> · <a href="web/v1/paste-prompt-pro.txt" target="_blank" rel="noopener">Pro</a> · <a href="web/v1/paste-prompt-god.txt" target="_blank" rel="noopener">God</a>. On ChatGPT, also upload <a href="web/v1/aisa_web.py" download data-event="engine_download">aisa_web.py</a> with your zip so it can run the scanner.</p>
+      </div>
+    </div>
+
+    <div class="tiers">
+      <article class="card tier"><span class="tag">Free AI</span><h3>Lite</h3><p>Top risks only, a one-page report. Fits free-plan limits.</p><ul><li class="y">Fast, low usage</li><li class="y">Auth, access, secrets, injection, console tampering</li><li class="n">Misses deeper business-logic bugs</li></ul><p class="best">Best for: a quick check before sharing a demo</p></article>
+      <article class="card tier hot"><span class="tag red">Recommended</span><h3>Pro</h3><p>Full VAPT plus browser-console tampering, hardening notes and auto DPDP.</p><ul><li class="y">Thorough, still quick</li><li class="y">DPDP pass when personal data is found</li><li class="n">Needs a paid plan for big zips</li></ul><p class="best">Best for: most real apps</p></article>
+      <article class="card tier"><span class="tag">Paid AI</span><h3>God Mode / Deep</h3><p>Everything, plus a self-refutation pass, risk chains, an impact scenario and a fix-priority roadmap.</p><ul><li class="y">Closest to the CLI</li><li class="y">Deep 4-pass covers the most ground</li><li class="n">Uses most of a session's limit</li></ul><p class="best">Best for: pre-launch, client delivery, payments or personal data</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DPDP ========== -->
+<section class="sec" id="dpdp">
+  <div class="wrap">
+    <p class="eyebrow">India DPDP Act 2023</p>
+    <h2>A dedicated DPDP audit, against your actual code</h2>
+    <p class="sub">Not a questionnaire. It traces where personal data is collected, stored, logged, shared and erased, then maps each gap to the section and rule it touches. Aadhaar, PAN, UAN, bank and salary data raise severity automatically.</p>
+    <div class="dpdp-grid">
+      <div class="ob"><b>G1</b><h4>Notice</h4><p>s.5 · Rule 3</p></div>
+      <div class="ob"><b>G2</b><h4>Consent &amp; withdrawal</h4><p>s.6, s.7 · Rules 3, 4</p></div>
+      <div class="ob"><b>G3</b><h4>Purpose &amp; minimisation</h4><p>s.4 to s.6</p></div>
+      <div class="ob"><b>G4</b><h4>Accuracy &amp; correction</h4><p>s.8(3), s.12</p></div>
+      <div class="ob hl"><b>G5</b><h4>Security safeguards</h4><p>s.8(5) · Rule 6</p></div>
+      <div class="ob hl"><b>G6</b><h4>Breach readiness</h4><p>s.8(6) · Rule 7</p></div>
+      <div class="ob"><b>G7</b><h4>Retention &amp; erasure</h4><p>s.8(7) · Rule 8</p></div>
+      <div class="ob"><b>G8</b><h4>Data Principal rights</h4><p>s.11 to s.14</p></div>
+      <div class="ob"><b>G9</b><h4>Children's data</h4><p>s.9 · Rules 10 to 12</p></div>
+      <div class="ob"><b>G10</b><h4>Processors &amp; transfers</h4><p>s.8(2), s.16</p></div>
+      <div class="ob"><b>G11</b><h4>Significant Data Fiduciary</h4><p>s.10 · Rule 13</p></div>
+      <div class="ob"><b>G12</b><h4>Contact &amp; accountability</h4><p>s.8(9), s.8(10)</p></div>
+    </div>
+    <div class="dpdp-row">
+      <div class="card why"><h3>Why it matters now</h3><ul><li>The DPDP Rules were notified in November 2025, with core obligations phasing in by about May 2027.</li><li>Penalties for failing to protect personal data can reach <b>₹250 crore</b>.</li><li>Breaches must be reported to the Data Protection Board; the detailed report is due within <b>72 hours</b>.</li></ul></div>
+      <div class="card why"><h3>How to run it</h3><ul><li><b>Web:</b> pick "DPDP only" in the prompt studio, or Pro/God (DPDP runs automatically when personal data is found).</li><li><b>CLI:</b> <code>/ai-dpdp-audit</code>, which reuses the security run's data map.</li><li>Technical readiness only. Not legal advice, and it never says "compliant".</li></ul><a class="btn sm ghost" href="#reports">See a sample DPDP report</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BENCHMARK ========== -->
+<section class="sec alt" id="benchmark">
+  <div class="wrap">
+    <p class="eyebrow">Measured, not claimed</p>
+    <h2>Benchmark: OWASP Juice Shop</h2>
+    <p class="sub">Scored against 30 core real-world vulnerability types, frozen by a published filter <em>before</em> any scoring. Same strict rules for every tool.</p>
+    <div class="bench card">
+      <div class="bars" role="table" aria-label="Core 30 scores">
+        <div class="bar me" role="row"><span role="cell">AI-Security-Audit-Skills CLI</span><div class="track"><i style="--v:25"></i></div><b role="cell">25<small>/30</small></b></div>
+        <div class="bar" role="row"><span role="cell">Codex + our prompt</span><div class="track"><i style="--v:11"></i></div><b role="cell">11<small>/30</small></b></div>
+        <div class="bar" role="row"><span role="cell">Claude.ai + our prompt <em>partial run</em></span><div class="track"><i style="--v:10"></i></div><b role="cell">10<small>/30</small></b></div>
+        <div class="bar" role="row"><span role="cell">ChatGPT + our prompt</span><div class="track"><i style="--v:7"></i></div><b role="cell">7<small>/30</small></b></div>
+        <div class="bar muted" role="row"><span role="cell">Gemini Pro</span><div class="track"></div><b role="cell">refused</b></div>
+      </div>
+      <div class="bench-side">
+        <div class="kpi"><b>0</b><span>false positives on Juice Shop, every tool</span></div>
+        <div class="kpi"><b>46/60</b><span>CLI full strict score (web best: 23)</span></div>
+        <p class="fine">Juice Shop is deliberately vulnerable, so 0 false positives measures precision on known-vulnerable code only. Codex used the softer defensive prompt; Claude.ai stopped before about 40 routes. Not a clean model-vs-model test.</p>
+        <div class="row-btns"><a class="btn sm primary" href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open">Full scorecard</a><a class="btn sm ghost" href="benchmark/executive-scorecard.pdf" target="_blank" rel="noopener" data-event="pdf_download">Executive PDF</a><a class="btn sm ghost" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/tests/benchmark/core30.md" target="_blank" rel="noopener">Core 30 rule</a></div>
+      </div>
+    </div>
+    <div class="aibest">
+      <div class="card ai"><h4>Claude.ai</h4><p>Fastest (5 min), strong on technical bugs.</p><span class="ok">Good</span></div>
+      <div class="card ai"><h4>Codex</h4><p>Most findings, runs the scanner. Use the defensive wording.</p><span class="ok">Good</span></div>
+      <div class="card ai"><h4>ChatGPT</h4><p>Most careful labelling, downloadable files.</p><span class="ok">Good</span></div>
+      <div class="card ai"><h4>Gemini Pro</h4><p>Refused, then couldn't read the zip.</p><span class="bad">Not suitable</span></div>
+    </div>
+    <p class="tipline">Tip: each AI found different bugs. For anything important, run two, or use the CLI.</p>
+  </div>
+</section>
+
+<!-- ========== REPORTS ========== -->
+<section class="sec" id="reports">
+  <div class="wrap">
+    <p class="eyebrow">Sample reports</p>
+    <h2>See exactly what you get</h2>
+    <p class="sub">Real reports from public or test apps, never a private project. Click a page to view it full size.</p>
+    <div class="rep-grid">
+      <article class="card rep">
+        <div class="rep-hd"><span class="tag red">Security VAPT</span><h3>OWASP Juice Shop · 34 pages</h3></div>
+        <div class="thumbs">
+          <button class="th" data-full="reports/report-cover.webp" data-cap="Security report: cover"><img src="reports/report-cover-thumb.webp" alt="Security audit report cover page" width="350" height="453" loading="lazy" decoding="async"></button>
+          <button class="th" data-full="reports/report-findings.webp" data-cap="Security report: findings summary"><img src="reports/report-findings-thumb.webp" alt="Security report findings summary table" width="350" height="453" loading="lazy" decoding="async"></button>
+          <button class="th" data-full="reports/report-detail.webp" data-cap="Security report: finding with proof"><img src="reports/report-detail-thumb.webp" alt="Security report detailed finding with file and line proof" width="350" height="453" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="row-btns"><a class="btn sm primary" href="reports/sample-security-audit-report.pdf" target="_blank" rel="noopener" data-event="pdf_download">View PDF</a><a class="btn sm ghost" href="reports/sample-security-audit-report.pdf" download data-event="pdf_download">Download</a></div>
+      </article>
+      <article class="card rep">
+        <div class="rep-hd"><span class="tag">DPDP audit</span><h3>Vuln HR Portal (test app) · 8 pages</h3></div>
+        <div class="thumbs two">
+          <button class="th" data-full="reports/dpdp-cover.webp" data-cap="DPDP report: cover"><img src="reports/dpdp-cover-thumb.webp" alt="DPDP audit report cover page" width="350" height="453" loading="lazy" decoding="async"></button>
+          <button class="th" data-full="reports/dpdp-findings.webp" data-cap="DPDP report: findings"><img src="reports/dpdp-findings-thumb.webp" alt="DPDP report findings mapped to Act sections" width="350" height="453" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="row-btns"><a class="btn sm primary" href="reports/sample-dpdp-audit-report.pdf" target="_blank" rel="noopener" data-event="pdf_download">View PDF</a><a class="btn sm ghost" href="reports/sample-dpdp-audit-report.pdf" download data-event="pdf_download">Download</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CLI ========== -->
+<section class="sec alt" id="cli">
+  <div class="wrap">
+    <p class="eyebrow">Claude Code CLI</p>
+    <h2>Install in one line</h2>
+    <p class="sub">Runs locally on Windows and macOS. Reports are saved outside your project, so nothing in your repo changes.</p>
+    <div class="cli-grid">
+      <div class="card cmd"><h4>Plugin (recommended)</h4><pre><code>/plugin marketplace add risewithvj/AI-Security-Audit-Skills
+/plugin install ai-security-audit-skills@ai-security-audit-skills</code></pre><button class="btn sm ghost copy" type="button" data-event="install_copy" data-os="plugin" data-copy="/plugin marketplace add risewithvj/AI-Security-Audit-Skills&#10;/plugin install ai-security-audit-skills@ai-security-audit-skills">Copy</button></div>
+      <div class="card cmd"><h4>Windows (PowerShell)</h4><pre><code>git clone https://github.com/risewithvj/AI-Security-Audit-Skills
+powershell -ExecutionPolicy Bypass -File .\AI-Security-Audit-Skills\install\install.ps1</code></pre><button class="btn sm ghost copy" type="button" data-event="install_copy" data-os="windows" data-copy="git clone https://github.com/risewithvj/AI-Security-Audit-Skills&#10;powershell -ExecutionPolicy Bypass -File .\AI-Security-Audit-Skills\install\install.ps1">Copy</button></div>
+      <div class="card cmd"><h4>macOS / Linux</h4><pre><code>git clone https://github.com/risewithvj/AI-Security-Audit-Skills
+bash AI-Security-Audit-Skills/install/install.sh</code></pre><button class="btn sm ghost copy" type="button" data-event="install_copy" data-os="mac" data-copy="git clone https://github.com/risewithvj/AI-Security-Audit-Skills&#10;bash AI-Security-Audit-Skills/install/install.sh">Copy</button></div>
+    </div>
+    <div class="card usage"><div><h4>Then, in Claude Code</h4><p><code>/ai-security-audit</code> runs the security VAPT. <code>/ai-dpdp-audit</code> runs the DPDP audit. Restart Claude Code after installing.</p></div><a class="btn sm ghost" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/START.md" target="_blank" rel="noopener">Read START.md</a></div>
+  </div>
+</section>
+
+<!-- ========== ROADMAP ========== -->
+<section class="sec" id="roadmap">
+  <div class="wrap">
+    <p class="eyebrow">Roadmap</p>
+    <h2>Where it's going</h2>
+    <div class="road">
+      <div class="col"><h4><span class="st done"></span>Shipped</h4>
+        <div class="it"><b>v1.6</b>New site, HD reports, issue forms</div>
+        <div class="it"><b>v1.5</b>Web prompt studio, lean CLI, Core 30 benchmark</div>
+        <div class="it"><b>v1.4</b>Original content gate, no-install web version</div>
+        <div class="it"><b>v1.0–1.3</b>6-phase CLI, DPDP skill, WordPress + Apps Script</div>
+      </div>
+      <div class="col"><h4><span class="st now"></span>Next</h4>
+        <div class="it"><b>Web 4-pass benchmark</b>Measure the Deep pack on every AI</div>
+        <div class="it"><b>Second benchmark</b>OWASP NodeGoat, scored the same way</div>
+        <div class="it"><b>SARIF export</b>Findings in GitHub code scanning</div>
+      </div>
+      <div class="col"><h4><span class="st later"></span>Later</h4>
+        <div class="it"><b>Live staging check</b>Optional, behind an explicit authorisation gate</div>
+        <div class="it"><b>Fix-branch helper</b>One finding per commit with tests, then re-audit</div>
+        <div class="it"><b>Your idea</b><a href="https://github.com/risewithvj/AI-Security-Audit-Skills/issues/new/choose" target="_blank" rel="noopener" data-event="issue_click">Request a feature →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESOURCES ========== -->
+<section class="sec alt" id="resources">
+  <div class="wrap">
+    <p class="eyebrow">Everything in one place</p>
+    <h2>Resources</h2>
+    <div class="res">
+      <a class="card r" href="https://github.com/risewithvj/AI-Security-Audit-Skills" target="_blank" rel="noopener" data-event="github_click"><b>GitHub repo</b><span>Source, README, stars</span></a>
+      <a class="card r" href="https://github.com/risewithvj/AI-Security-Audit-Skills/releases" target="_blank" rel="noopener"><b>Releases</b><span>Every version + notes</span></a>
+      <a class="card r" href="https://github.com/risewithvj/AI-Security-Audit-Skills/issues/new/choose" target="_blank" rel="noopener" data-event="issue_click"><b>Report an issue</b><span>Bug, false positive, idea</span></a>
+      <a class="card r" href="https://github.com/risewithvj/AI-Security-Audit-Skills/discussions" target="_blank" rel="noopener"><b>Discussions</b><span>Questions and tips</span></a>
+      <a class="card r" href="benchmark/juice-shop-web-ai.html" data-event="scorecard_open"><b>Scorecard</b><span>Per-challenge matrix</span></a>
+      <a class="card r" href="web/v1/runbook.md" target="_blank" rel="noopener"><b>Web runbook</b><span>The method, in full</span></a>
+      <a class="card r" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><b>Changelog</b><span>What changed when</span></a>
+      <a class="card r" href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener"><b>Contributing</b><span>Add a stack or rule</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FAQ ========== -->
+<section class="sec" id="faq">
+  <div class="wrap narrow">
+    <p class="eyebrow">FAQ</p>
+    <h2>Questions people ask</h2>
+    <details><summary>Is my code safe?</summary><p>The prompt sends nothing anywhere. Your zip goes only to the AI you choose, under that AI's own terms. Never zip .env files or real secrets. The CLI runs on your machine and saves reports outside your project.</p></details>
+    <details><summary>Does it fix my code?</summary><p>No. It gives recommendations only, with the smallest safe fix for each finding. You or your developers decide what to change.</p></details>
+    <details><summary>Why "no proof, no finding"?</summary><p>AI reviews often pad reports with weak "issues". Here every vulnerability needs the attacker, the path with file and line, the missing check and the result. Unproven items go to "Needs check".</p></details>
+    <details><summary>Free AI or paid AI?</summary><p>Free plans have small limits, so use Lite for a quick top-risk check. Paid plans can run Pro, God Mode or the Deep 4-pass pack for a full audit. The CLI goes deepest.</p></details>
+    <details><summary>What is DPDP?</summary><p>India's Digital Personal Data Protection Act, 2023, with the DPDP Rules, 2025. The DPDP audit checks notice, consent, safeguards, breach readiness, retention and erasure, rights, children's data and transfers, in your actual code. It's technical readiness, not legal advice.</p></details>
+    <details><summary>Which AI is best?</summary><p>In our test, Claude.ai and Codex scored highest among web AIs, ChatGPT gave the most careful reports, and Gemini Pro refused. The CLI scored more than twice any single web AI.</p></details>
+    <details><summary>Does this page track me?</summary><p>Only anonymous usage, and only if you click Accept. Google Tag Manager runs with Consent Mode v2, so storage starts denied and advertising stays off. Your audit content is never tracked.</p></details>
+  </div>
+</section>
+
+<!-- ========== FINAL CTA ========== -->
+<section class="final">
+  <div class="wrap final-in">
+    <h2>Ship it. But audit it first.</h2>
+    <p>Free, open source, and it never touches your code.</p>
+    <div class="cta"><a class="btn primary" href="#prompts">Get your prompt</a><a class="btn ghost" href="https://github.com/risewithvj/AI-Security-Audit-Skills" target="_blank" rel="noopener" data-event="github_click">Star on GitHub</a></div>
+  </div>
+</section>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="ftr">
+  <div class="wrap ftr-in">
+    <div class="author">
+      <div class="av" aria-hidden="true">VJ</div>
+      <div><b>Built by Vijaya Kumar L</b><span>Rise With VJ · Lead, Application Engineering</span>
+        <p><a href="https://github.com/risewithvj" target="_blank" rel="noopener" data-event="github_click">GitHub</a> · <a href="https://www.linkedin.com/in/vijayakumarl/" target="_blank" rel="noopener">LinkedIn</a></p></div>
+    </div>
+    <div class="fcols">
+      <div><h5>Product</h5><a href="#prompts">Prompt studio</a><a href="#cli">CLI install</a><a href="#dpdp">DPDP audit</a><a href="#reports">Sample reports</a></div>
+      <div><h5>Proof</h5><a href="#benchmark">Benchmark</a><a href="benchmark/juice-shop-web-ai.html">Scorecard</a><a href="benchmark/executive-scorecard.pdf" target="_blank" rel="noopener">Executive PDF</a></div>
+      <div><h5>Project</h5><a href="https://github.com/risewithvj/AI-Security-Audit-Skills/releases" target="_blank" rel="noopener">Releases</a><a href="https://github.com/risewithvj/AI-Security-Audit-Skills/issues/new/choose" target="_blank" rel="noopener">Issues</a><a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/risewithvj/AI-Security-Audit-Skills/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></div>
+    </div>
+  </div>
+  <div class="wrap legal"><p>Recommendations only. Audit only code you own or are authorised to review. Not legal advice. Analytics are anonymous and off until you accept.</p><p>© 2026 Vijaya Kumar L · Rise With VJ · github.com/risewithvj</p></div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Report page preview" hidden>
+  <button class="lb-x" type="button" aria-label="Close preview">×</button>
+  <figure><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Consent banner (shown by analytics.js only when an ID is set) -->
+<div class="consent" id="consent" role="dialog" aria-live="polite" aria-label="Analytics consent">
+  <p>We use anonymous usage analytics (which prompts and links are clicked, never your audit content). Storage stays denied until you accept; advertising is never enabled.</p>
+  <div class="row"><button class="decline" type="button">Decline</button><button class="accept" type="button">Accept</button></div>
+</div>
+
+<noscript><style>#prompt{display:none}</style><p class="wrap">Prompts need JavaScript. Use the <a href="web/v1/paste-prompt-pro.txt">paste-in Pro prompt</a> instead.</p></noscript>
 <script src="assets/prompts-embed.js"></script>
-<script src="assets/site.js" defer></script>
+<script src="assets/landing.js" defer></script>
 <script src="analytics.js" defer></script>
 </body>
 </html>
