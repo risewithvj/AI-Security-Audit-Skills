@@ -1,0 +1,33 @@
+name: "🎯 False positive"
+description: A finding was reported that is not actually a real vulnerability.
+title: "[false-positive] "
+labels: ["false-positive"]
+body:
+  - type: markdown
+    attributes:
+      value: "Proof matters both ways. Help us show why this finding is not real so we can tighten the rule."
+  - type: input
+    id: finding
+    attributes:
+      label: Finding title / ID
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: File and line it was reported at
+      placeholder: "routes/login.ts:34"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it is not exploitable
+      description: The source-level reason the reported attack does not cross a real trust boundary.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Which rule / checklist / scanner raised it
+      placeholder: "semgrep rule X / checklist Y / AI hunt"

@@ -1,0 +1,42 @@
+name: "🐞 Bug report"
+description: Something in the skill, engine or report is broken or wrong.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What went wrong, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Ran `aisa.py ...` / pasted the Pro prompt into ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Engine version (from `aisa.py doctor`) or web prompt tier.
+      placeholder: "v1.6.0 / web God Mode"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options: [Windows, macOS, Linux, N/A (web AI)]
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / output
+      description: Paste the relevant output. Do NOT include secrets or private source.
+      render: shell

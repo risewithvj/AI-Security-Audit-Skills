@@ -1,0 +1,32 @@
+name: "🧱 New stack support"
+description: Request a new stack / framework the audit should understand.
+title: "[stack] "
+labels: ["new-stack"]
+body:
+  - type: input
+    id: stack
+    attributes:
+      label: Stack / framework
+      placeholder: "e.g. Ruby on Rails, .NET, Flutter, Convex"
+    validations:
+      required: true
+  - type: textarea
+    id: signals
+    attributes:
+      label: How to detect it
+      description: Tell-tale files, manifests, or imports that identify this stack.
+      placeholder: "Gemfile, config/routes.rb, app/controllers/**"
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Top attack classes for this stack
+      description: What should the audit focus on here (auth, injection, mass assignment, SSRF…)?
+    validations:
+      required: true
+  - type: input
+    id: refs
+    attributes:
+      label: References
+      description: Docs, OWASP cheat sheets, or known CVE patterns (optional).
