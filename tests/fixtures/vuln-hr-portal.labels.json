@@ -1,0 +1,12 @@
+{
+  "name": "vuln-hr-portal planted issues (starter benchmark labels)",
+  "note": "Ground-truth planted vulnerabilities in the test fixture. Use with: aisa.py benchmark --run <run> --labels this-file. The jwt-fallback label is only a needs_validation finding in the sample records, so it demonstrates the 'missed' column.",
+  "labels": [
+    {"id": "idor-payslips",        "class": "Broken Access Control",      "file": "src/routes/payslips.js"},
+    {"id": "client-service-role",  "class": "Secrets exposure",           "file": "web/supabaseClient.js"},
+    {"id": "sql-injection-search", "class": "SQL Injection",              "file": "src/routes/search.js"},
+    {"id": "payment-tampering",    "class": "Business logic payment",     "file": "src/routes/checkout.js"},
+    {"id": "pii-in-logs",          "class": "Sensitive data in logs",     "file": "src/routes/payslips.js"},
+    {"id": "jwt-fallback-secret",  "class": "Insecure default auth",      "file": "src/lib/auth.js"}
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "$comment": "AI-Security-Audit-Skills example findings | Author: Vijaya Kumar L (Rise With VJ) | https://github.com/risewithvj | https://www.linkedin.com/in/vijayakumarl/ | MIT",
+  "schema_version": "1.0",
+  "run_id": "vuln-hr-portal-dpdp-example",
+  "framework": "dpdp",
+  "generated_at": "2026-11-10T13:30:00+05:30",
+  "overall_risk": "High",
+  "findings": [
+    {
+      "id": "F-01",
+      "verdict": "confirmed",
+      "title": "PAN and bank account numbers are stored and returned without encryption or masking",
+      "class": "Security safeguards",
+      "location": "db/schema.sql:3, src/routes/payslips.js:8-10",
+      "plain": {
+        "what_this_is": "The payslips table keeps each employee's PAN and bank account number, and the payslip API returns them.",
+        "problem": "They are stored as plain text and sent back in full; nothing is encrypted, masked or tokenised.",
+        "fix": "Encrypt these columns at rest and return only the last 4 characters unless the caller truly needs the full value.",
+        "if_we_skip": "Anyone who gets database, backup or API access sees complete financial identifiers, and the DPDP minimum safeguards are not met."
+      },
+      "description": "The payslips table defines bank_account_no and pan as plain text columns, and the payslip route selects and returns both in full. No encryption, masking, obfuscation or tokenisation exists anywhere in the repository (grep for encrypt, cipher, kms, pgcrypto, mask returns no matches).",
+      "trace": [
+        {
+          "file": "db/schema.sql",
+          "line": 3,
+          "snippet": "CREATE TABLE payslips (id SERIAL PRIMARY KEY, employee_id INT, month TEXT, net_pay NUMERIC, bank_account_no TEXT, ifsc TEXT, pan VARCHAR(10), pdf BYTEA);",
+          "note": "plain-text PAN and bank account"
+        },
+        {
+          "file": "src/routes/payslips.js",
+          "line": 8,
+          "snippet": "const result = await db.query('SELECT pdf, net_pay, bank_account_no, pan FROM payslips WHERE employee_id = $1 AND month = $2', [employeeId, month]);",
+          "note": "selected in full"
+        },
+        {
+          "file": "src/routes/payslips.js",
+          "line": 10,
+          "snippet": "res.json(result.rows[0] || {});",
+          "note": "returned in full"
+        }
+      ],
+      "result": "Full PAN and bank account numbers are readable from the database, its backups and the API.",
+      "cwe": [
+        "CWE-311",
+        "CWE-359"
+      ],
+      "owasp": [
+        "A04:2025"
+      ],
+      "severity": "High",
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Financial identifiers of every employee are exposed in any database, backup or API leak. Missing Rule 6 minimum measures is a breach of Section 8(5), the provision carrying the highest penalty under the Act's Schedule.",
+      "root_cause": "No data-protection layer for sensitive columns; the API returns raw rows.",
+      "recommendation": {
+        "summary": "Encrypt pan and bank_account_no at rest (pgcrypto or application-level envelope encryption with a KMS key) and return masked values from the API.",
+        "code_example": "const row = result.rows[0];\nres.json({ ...row, pan: row && mask(row.pan), bank_account_no: row && mask(row.bank_account_no) });\n// mask = v => v ? '****' + v.slice(-4) : v",
+        "files_to_change": [
+          "db/schema.sql",
+          "src/routes/payslips.js"
+        ],
+        "production_risk": "Medium. Needs a data migration to encrypt existing rows, and any report or export that reads these columns must decrypt through the new layer."
+      },
+      "regression_test": "Query the payslips table directly and assert pan is not plain text; call the API and assert only the last 4 characters are returned.",
+      "dpdp": {
+        "obligation": "Reasonable security safeguards",
+        "act_sections": [
+          "Section 8(5)"
+        ],
+        "rules": [
+          "Rule 6(1)(a)",
+          "Rule 6(1)(b)"
+        ],
+        "data_types": [
+          "PAN",
+          "Bank account"
+        ],
+        "gap_type": "missing"
+      }
+    },
+    {
+      "id": "F-02",
+      "verdict": "confirmed",
+      "title": "No erasure path exists for employee or payslip records",
+      "class": "Retention and erasure",
+      "location": "db/schema.sql:2-3 (no delete anywhere in src/)",
+      "plain": {
+        "what_this_is": "The app stores employee profiles and payslips.",
+        "problem": "There is no code that ever deletes or anonymises them, and no retention period is defined, so data of employees who left is kept forever.",
+        "fix": "Define retention per data type and add a scheduled job that erases or anonymises records after it, after the one-year minimum.",
+        "if_we_skip": "Personal data is kept after its purpose ends, which the Act prohibits, and every old record stays exposed to future breaches."
+      },
+      "description": "The employees and payslips tables have no retention fields, and the codebase contains no DELETE statement, ORM delete call, purge job or TTL for either table (grep for DELETE, delete(, destroy, purge, retention, ttl in src/ returns nothing).",
+      "trace": [
+        {
+          "file": "db/schema.sql",
+          "line": 2,
+          "snippet": "CREATE TABLE employees (id SERIAL PRIMARY KEY, org_id INT, name TEXT, email TEXT, phone TEXT, department TEXT, date_of_birth DATE, aadhaar_number VARCHAR(12), pan VARCHAR(10));",
+          "note": "no retention or deletion fields"
+        },
+        {
+          "file": "db/schema.sql",
+          "line": 3,
+          "snippet": "CREATE TABLE payslips (id SERIAL PRIMARY KEY, employee_id INT, month TEXT, net_pay NUMERIC, bank_account_no TEXT, ifsc TEXT, pan VARCHAR(10), pdf BYTEA);",
+          "note": "no retention or deletion fields"
+        }
+      ],
+      "result": "Personal data of former employees is retained indefinitely with no erasure mechanism.",
+      "cwe": [
+        "CWE-212"
+      ],
+      "owasp": [],
+      "severity": "High",
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Indefinite retention of employee identity and financial data after the purpose is served; erasure requests cannot be honoured.",
+      "root_cause": "Retention and deletion were never designed into the data model.",
+      "recommendation": {
+        "summary": "Add a retention policy per data type (respecting labour, tax and PF record-keeping laws) and a scheduled erasure job; add an erasure-request flow for Data Principals.",
+        "files_to_change": [
+          "db/schema.sql",
+          "src/jobs/retention.js (new)"
+        ],
+        "production_risk": "Medium. Agree retention periods with HR and legal first; statutory payroll records may need longer retention than other data."
+      },
+      "regression_test": "Seed an employee marked exited beyond the retention period, run the job, assert the profile is anonymised and payslip PDFs are deleted.",
+      "dpdp": {
+        "obligation": "Retention and erasure",
+        "act_sections": [
+          "Section 8(7)",
+          "Section 12(3)"
+        ],
+        "rules": [
+          "Rule 8"
+        ],
+        "data_types": [
+          "Employee profile",
+          "Payslip",
+          "PAN",
+          "Bank account",
+          "Aadhaar number"
+        ],
+        "gap_type": "missing"
+      }
+    },
+    {
+      "id": "F-03",
+      "verdict": "confirmed",
+      "title": "Full 12-digit Aadhaar number is stored for every employee",
+      "class": "Purpose limitation and minimisation",
+      "location": "db/schema.sql:2",
+      "plain": {
+        "what_this_is": "The employees table has a column for the full Aadhaar number.",
+        "problem": "No code reads it for any purpose, yet the full number is kept.",
+        "fix": "Stop storing the full number; keep a reference token or the last 4 digits only if a purpose needs it.",
+        "if_we_skip": "The most sensitive identifier is held without need, raising the impact of any breach."
+      },
+      "description": "employees.aadhaar_number holds the full 12-digit value. No route, job or query in src/ reads the column (grep for aadhaar in src/ returns no read path), so storage serves no implemented purpose.",
+      "trace": [
+        {
+          "file": "db/schema.sql",
+          "line": 2,
+          "snippet": "CREATE TABLE employees (id SERIAL PRIMARY KEY, org_id INT, name TEXT, email TEXT, phone TEXT, department TEXT, date_of_birth DATE, aadhaar_number VARCHAR(12), pan VARCHAR(10));",
+          "note": "full Aadhaar column"
+        }
+      ],
+      "result": "Aadhaar numbers are retained without a purpose that uses them.",
+      "cwe": [
+        "CWE-359"
+      ],
+      "owasp": [],
+      "severity": "Medium",
+      "confidence": "High",
+      "votes": {
+        "confirmed": 2,
+        "needs_validation": 1,
+        "rejected": 0,
+        "dissent": "One verifier noted an external KYC process might use the column outside this repository."
+      },
+      "business_impact": "Unnecessary holding of Aadhaar numbers increases breach impact and conflicts with purpose limitation.",
+      "root_cause": "Fields added to the schema without a defined purpose.",
+      "recommendation": {
+        "summary": "Drop the column or replace it with a token from an Aadhaar Data Vault or KYC provider reference; if a process outside this repo needs it, document the purpose and encrypt it.",
+        "files_to_change": [
+          "db/schema.sql"
+        ],
+        "production_risk": "Low in this repo (no readers). Confirm no external report or integration reads the column before dropping it."
+      },
+      "regression_test": "Schema test asserts no column named aadhaar_number exists or that it holds only tokens.",
+      "dpdp": {
+        "obligation": "Purpose limitation and minimisation",
+        "act_sections": [
+          "Section 4",
+          "Section 6(1)"
+        ],
+        "rules": [],
+        "data_types": [
+          "Aadhaar number"
+        ],
+        "gap_type": "incorrect"
+      }
+    },
+    {
+      "id": "V-01",
+      "verdict": "needs_validation",
+      "title": "No notice is visible where employee personal data is collected",
+      "class": "Notice",
+      "location": "db/schema.sql:2 (no collection UI in this repository)",
+      "description": "The repository stores employee contact, date of birth, Aadhaar and PAN, but contains no onboarding form or notice text. Collection may happen in another system (HRMS onboarding, paper forms) that is not in scope.",
+      "trace": [
+        {
+          "file": "db/schema.sql",
+          "line": 2,
+          "snippet": "CREATE TABLE employees (id SERIAL PRIMARY KEY, org_id INT, name TEXT, email TEXT, phone TEXT, department TEXT, date_of_birth DATE, aadhaar_number VARCHAR(12), pan VARCHAR(10));",
+          "note": "personal data stored"
+        }
+      ],
+      "missing_fact": "Where and how employee data is collected, and whether a notice under Section 5 is given at that point (or the processing relies on the employment legitimate use under Section 7).",
+      "why_verification": "The collection flow is not part of this repository.",
+      "safe_check": "Ask HR or the onboarding system owner for the collection screen or form and the notice text shown; confirm it lists the data, the purposes and how to exercise rights.",
+      "potential_impact": "If no notice is given and consent is the basis, processing lacks a valid basis for each data type.",
+      "cwe": [],
+      "owasp": [],
+      "dpdp": {
+        "obligation": "Notice",
+        "act_sections": [
+          "Section 5",
+          "Section 7"
+        ],
+        "rules": [
+          "Rule 3"
+        ],
+        "data_types": [
+          "Employee profile",
+          "Aadhaar number",
+          "PAN"
+        ],
+        "gap_type": "unverifiable"
+      }
+    }
+  ]
+}

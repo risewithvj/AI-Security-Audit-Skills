@@ -1,0 +1,191 @@
+# -----------------------------------------------------------------------------
+# AI-Security-Audit-Skills CI
+# Author   : Vijaya Kumar L  (Rise With VJ)
+# GitHub   : https://github.com/risewithvj
+# LinkedIn : https://www.linkedin.com/in/vijayakumarl/
+# License  : MIT
+# -----------------------------------------------------------------------------
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engine-tests:
+    name: Engine tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.12"]
+        exclude:
+          - os: ubuntu-latest
+            python: "3.9"
+        include:
+          - os: ubuntu-22.04
+            python: "3.9"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Python packages
+        run: python -m pip install python-docx jsonschema cvss
+      - name: Doctor
+        run: python skills/ai-security-audit/scripts/aisa.py doctor
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+
+  semgrep-rules:
+    name: Validate bundled Semgrep rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install semgrep
+      - name: Validate rules
+        run: semgrep scan --validate --config skills/ai-security-audit/semgrep-rules/ --metrics=off
+      - name: Rules still find the planted issues in the fixture
+        run: |
+          cp -r tests/fixtures/vuln-hr-portal /tmp/vhp
+          semgrep scan --config skills/ai-security-audit/semgrep-rules/ --metrics=off --json /tmp/vhp > /tmp/sg.json
+          python - <<'EOF'
+          import json, re
+          results = json.load(open("/tmp/sg.json"))["results"]
+          ids = {r["check_id"].split(".")[-1] for r in results}
+          need = {"jwt-fallback-secret", "sql-string-concat", "client-exposed-server-secret", "payment-amount-from-client", "idor-param-to-query", "pii-in-logs"}
+          missing = need - ids
+          assert not missing, f"bundled rules no longer detect: {missing}"
+          # Negative case: an empty-string fallback (`?? ""` / `|| ''`) fails closed
+          # and must NOT be flagged by jwt-fallback-secret.
+          empty = re.compile(r"""(\|\||\?\?)\s*(['"])\2""")
+          bad = [r for r in results if r["check_id"].endswith("jwt-fallback-secret") and empty.search(r["extra"]["lines"])]
+          assert not bad, f"jwt-fallback-secret wrongly flagged an empty-string fallback: {[r['extra']['lines'] for r in bad]}"
+          print("all planted issues detected:", sorted(ids))
+          print("empty-string fallback correctly ignored")
+          EOF
+      - name: PHP/WordPress rules fire on the PHP fixture and ignore safe cases
+        run: |
+          cp -r tests/fixtures/php-wp-plugin /tmp/php
+          semgrep scan --config skills/ai-security-audit/semgrep-rules/ --metrics=off --json /tmp/php > /tmp/php.json
+          python - <<'EOF'
+          import json
+          res = json.load(open("/tmp/php.json"))["results"]
+          ids = {r["check_id"].split(".")[-1] for r in res}
+          need = {"wpdb-unprepared", "echo-request-xss", "unserialize-request", "include-request",
+                  "dynamic-eval", "exec-request", "extract-request", "ssrf-request-url",
+                  "upload-no-type-check", "rest-permission-open", "ajax-nopriv-no-nonce", "base64-eval"}
+          missing = need - ids
+          assert not missing, f"bundled PHP rules no longer detect: {missing}"
+          src = open("/tmp/php/vuln.php").read().splitlines()
+          neg = ["esc_html($_GET", "sanitize_text_field($_POST", "json_decode($_POST", "include(__DIR__",
+                 "call_user_func(", 'system("uptime")', "extract($parsed_defaults)", "wp_remote_get('https",
+                 "$wpdb->prepare(", "myplugin_can_read"]
+          bad = []
+          for r in res:
+              line = src[r["start"]["line"] - 1]
+              for nm in neg:
+                  if nm in line:
+                      bad.append(line.strip())
+          assert not bad, f"PHP rules wrongly fired on a safe negative case: {bad}"
+          print("all planted PHP issues detected:", sorted(ids & need))
+          print("safe PHP negatives correctly ignored")
+          EOF
+      - name: Apps Script rules fire on the .gs fixture and ignore safe cases
+        run: |
+          cp -r tests/fixtures/apps-script-project /tmp/gs
+          semgrep scan --config skills/ai-security-audit/semgrep-rules/ --metrics=off --json /tmp/gs > /tmp/gs.json
+          python - <<'EOF'
+          import json
+          res = json.load(open("/tmp/gs.json"))["results"]
+          ids = {r["check_id"].split(".")[-1] for r in res}
+          need = {"webapp-anyone-anonymous", "xframe-allowall", "urlfetch-user-url",
+                  "html-user-input", "hardcoded-secret", "active-user-auth",
+                  "script-run-callable", "active-vs-effective-user",
+                  "drive-anyone-sharing", "urlfetch-settings-url"}
+          missing = need - ids
+          assert not missing, f"bundled Apps Script rules no longer detect: {missing}"
+          # Rule-specific negatives: (rule, substring that must NOT trigger it).
+          # A broad "any PropertiesService line is bad" check no longer works, since
+          # urlfetch-settings-url legitimately fires on a fetch() of a property value.
+          neg_pairs = [
+              ("hardcoded-secret", "PropertiesService.getScriptProperties().getProperty"),
+              ("urlfetch-user-url", 'UrlFetchApp.fetch("https://api.example.com'),
+              ("urlfetch-settings-url", 'UrlFetchApp.fetch("https://api.example.com'),
+              ("drive-anyone-sharing", "DriveApp.Access.PRIVATE"),
+              ("active-vs-effective-user", "getActiveUser"),
+          ]
+          bad = []
+          for r in res:
+              suffix = r["check_id"].split(".")[-1]
+              line = open(r["path"]).read().splitlines()[r["start"]["line"] - 1]
+              for rs, sub in neg_pairs:
+                  if suffix == rs and sub in line:
+                      bad.append((rs, line.strip()))
+          assert not bad, f"Apps Script rules wrongly fired on a safe case: {bad}"
+          print("all planted Apps Script issues detected:", sorted(ids & need))
+          EOF
+
+  skill-supply-chain:
+    name: Scan our own skills with NVIDIA SkillSpector
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install SkillSpector
+        run: uv tool install git+https://github.com/NVIDIA/skillspector.git
+      - name: Scan skills (static patterns, JSON)
+        run: |
+          # SkillSpector exits non-zero when it finds anything; the gate below decides
+          # pass/fail from the JSON, so don't let its exit code fail this step.
+          skillspector scan --no-llm --format json skills/ai-security-audit > sec.json || true
+          skillspector scan --no-llm --format json skills/ai-dpdp-audit > dpdp.json || true
+          test -s sec.json && test -s dpdp.json
+      - name: Gate on new HIGH/CRITICAL findings only
+        run: |
+          python .github/scripts/skillspector_gate.py --scan sec.json dpdp.json
+
+  web-engine:
+    name: Web engine (no-install) finds planted issues
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Zip the test fixture
+        run: |
+          cd tests/fixtures && zip -r -q "$GITHUB_WORKSPACE/vhp.zip" vuln-hr-portal
+      - name: Run the stdlib web engine on the zip
+        run: |
+          python docs/web/v1/aisa_web.py vhp.zip --out web-out
+      - name: Assert report.html written and planted issues found
+        run: |
+          python - <<'EOF'
+          import json, pathlib
+          out = pathlib.Path("web-out")
+          assert (out / "report.html").is_file(), "report.html was not written"
+          data = json.loads((out / "report.json").read_text(encoding="utf-8"))
+          ids = {f["rule"] for f in data.get("findings", [])}
+          need = {"jwt-fallback-secret", "sql-string-concat", "client-exposed-server-secret",
+                  "payment-amount-from-client", "idor-param-to-query", "pii-in-logs"}
+          missing = need - ids
+          assert not missing, f"web engine missed planted issues: {missing}"
+          print("web engine found all planted issues:", sorted(ids & need))
+          EOF

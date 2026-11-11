@@ -1,0 +1,376 @@
+{
+  "_comment": "Reviewed, by-design SkillSpector findings for this security-audit skill. Each entry is an attack-pattern example, example payload, or scanner-subprocess call that is expected in security-education content. CI fails only on HIGH/CRITICAL findings whose fingerprint is NOT listed here. Regenerate with: python .github/scripts/skillspector_gate.py --scan <reports> --update",
+  "allowed": [
+    {
+      "fingerprint": "21745513cfbee8dfd28301c2b54faba9aa6be9be74c3c2920b61153d62fc1cd2",
+      "id": "TT3",
+      "severity": "CRITICAL",
+      "category": "Data Flow",
+      "file": "scripts/aisa_lib/wpvulns.py"
+    },
+    {
+      "fingerprint": "848a626ee60b329e87d86996373bbb45585120e1e4f39a6effcc88c23d963ed9",
+      "id": "YR2",
+      "severity": "CRITICAL",
+      "category": "YARA Match",
+      "file": "semgrep-rules/aisa-php.yaml"
+    },
+    {
+      "fingerprint": "3759e6a4effbd89fa5b6fc80754a6923d55bc99fda186e8e597107f2cd346b04",
+      "id": "AE1",
+      "severity": "HIGH",
+      "category": "analysis-evasion",
+      "file": "SKILL.md"
+    },
+    {
+      "fingerprint": "6ca80d35567f9dc04e33479506102f81abc1aeee279c23fe88a7f8c1cfa2f92d",
+      "id": "AE1",
+      "severity": "HIGH",
+      "category": "analysis-evasion",
+      "file": "SKILL.md"
+    },
+    {
+      "fingerprint": "822a22977c710ee2e5c548ef072f868e2a355126c12cf7fc949d42a3eddc86c8",
+      "id": "AE1",
+      "severity": "HIGH",
+      "category": "analysis-evasion",
+      "file": "SKILL.md"
+    },
+    {
+      "fingerprint": "9bd2b0dde7483bdeadf985b05a6673f5b62f5fec8c114c5272263305d885aa2d",
+      "id": "AE1",
+      "severity": "HIGH",
+      "category": "analysis-evasion",
+      "file": "SKILL.md"
+    },
+    {
+      "fingerprint": "c387d778b50c7fc6dbb71e5502540c13dcfb589980742261328a8228dfa01f60",
+      "id": "AE1",
+      "severity": "HIGH",
+      "category": "analysis-evasion",
+      "file": "SKILL.md"
+    },
+    {
+      "fingerprint": "54128286fbbb336519af110f71851a2c1bf0423de61c6d9b054513dc11d1a32a",
+      "id": "AE1",
+      "severity": "HIGH",
+      "category": "analysis-evasion",
+      "file": "SKILL.md"
+    },
+    {
+      "fingerprint": "585dfe66dcf8dd59e27929295d3eb32cf81458b5bd468cd9bf20325fec8ad8d4",
+      "id": "E2",
+      "severity": "HIGH",
+      "category": "Data Exfiltration",
+      "file": "scripts/aisa_lib/scanners.py"
+    },
+    {
+      "fingerprint": "db13e2bc86eedb47a199548881121dc9bbcfa90f68d39f48a9c0bd644d352a5e",
+      "id": "MP3",
+      "severity": "HIGH",
+      "category": "Memory Poisoning",
+      "file": "checklists/vibe-coded/ai-integration.md"
+    },
+    {
+      "fingerprint": "a4ad140049198e9c3ff8b46c4dc536f942f987bcbd40322c46fb03fd4c260ed9",
+      "id": "MP3",
+      "severity": "HIGH",
+      "category": "Memory Poisoning",
+      "file": "checklists/vibe-coded/secrets-and-env.md"
+    },
+    {
+      "fingerprint": "992368847305d7d8a9d1e3ef846ffbdfae91e5fd97f387013d9edd74109ab3cb",
+      "id": "OH1",
+      "severity": "HIGH",
+      "category": "Output Handling",
+      "file": "checklists/vibe-coded/ai-integration.md"
+    },
+    {
+      "fingerprint": "152a270c69e5f498026be5430f75d09c53e612d4c86635345fe7e35d93b38ee0",
+      "id": "OH1",
+      "severity": "HIGH",
+      "category": "Output Handling",
+      "file": "semgrep-rules/aisa-core.yaml"
+    },
+    {
+      "fingerprint": "7f4628556472f313b15747f5a17dac99756fa4970aae5e69c5fea3ff34828f0a",
+      "id": "P1",
+      "severity": "HIGH",
+      "category": "Prompt Injection",
+      "file": "checklists/vibe-coded/ai-integration.md"
+    },
+    {
+      "fingerprint": "728a5bbeed81221fa612b1a591e55adb34a42614eb29d508d7bf2ea953876ea4",
+      "id": "P6",
+      "severity": "HIGH",
+      "category": "System Prompt Leakage",
+      "file": "checklists/vibe-coded/mobile.md"
+    },
+    {
+      "fingerprint": "90db6f55d69f559161a2849fde8edffb507139938d60d5919717abb304e0abfe",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/cloud-and-deployment.md"
+    },
+    {
+      "fingerprint": "14883fb854849dcb81ed03e7c9b31e64261a0d6165a5a776dbc43d7a344ad47d",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/cloud-and-deployment.md"
+    },
+    {
+      "fingerprint": "ac75eea6ed115d0252fb13bbb10e9c4421764d5a7612787edcde6a78569d8f88",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/core-attack-classes.md"
+    },
+    {
+      "fingerprint": "07a0b37ad28a14919446682ad9b1f38223a950eb02c424e48b49fe75c25268c0",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/core-attack-classes.md"
+    },
+    {
+      "fingerprint": "cf159af5f3c5aa20214f7ff51b2ec06e8190ff1ab76c35f09188a749bd35c424",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/desktop-mobile-and-ipc.md"
+    },
+    {
+      "fingerprint": "903a9f18e7222d4c1e39fcf76dec31bef3fd46b6332f4bc5bc823999d287548b",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/vibe-coded/authentication.md"
+    },
+    {
+      "fingerprint": "5059bb7b75e9337932d45472816371182dc6083e9db6060d8b737da812751493",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/vibe-coded/authentication.md"
+    },
+    {
+      "fingerprint": "1d7505be6268307507c320128a1d61ae0b567925073d352885b24399720f99c3",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "checklists/vibe-coded/secrets-and-env.md"
+    },
+    {
+      "fingerprint": "0d3b7ca23095b9db91601950562cb7c562f58bb1206a8acebbb7f94145faac47",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "scripts/aisa_lib/normalize.py"
+    },
+    {
+      "fingerprint": "933e7e6dda63d615cb9ac0846682521855cd79c351e84f3fa87d934c18b752db",
+      "id": "PE3",
+      "severity": "HIGH",
+      "category": "Privilege Escalation",
+      "file": "scripts/aisa_lib/pii.py"
+    },
+    {
+      "fingerprint": "e6871789fcb8cf46bd6c9bb61abf7711fb18e249130af2a74bc60820464f66fa",
+      "id": "SC2",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "checklists/supply-chain-and-release.md"
+    },
+    {
+      "fingerprint": "2b51c889ce1ab8e0aa44dfe38fddb1d3f08e1eed1dd60299104c7f7eaf7750e0",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/"
+    },
+    {
+      "fingerprint": "5d3de4475da3f3db4e4d79a82fdc71e674bad90c7d9efd8e9b8ab93828f9ee5a",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/__init__.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "6e903a07298dc09c476b2192a832d1196fd120200b74f3b491aa3a33c6d4148d",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/benchmark.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "59c9953e76035b77afb67c91fe0874dface64588fff27ffd99b1a860f4d5d651",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/common.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "4a13e573f4806368a2df30b8a81fe754a446ededc0b385b3f152a04a3d8645e7",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/exposed.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "1aec1c9cf6101d1a88b38be4a0dfeef9f835d0454610850674dd62273e8d66f2",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/normalize.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "4bcbf5e1118b1875f06fc6ab5c4ed812381759982f378f0f6ae74b49d5e424b5",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/pii.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "eca2c2c2c83af14306213691519a4952b40783c2fc3946de2ed89d3572302e35",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/report_docx.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "6f15fc2e3df1a353651be1dd9a9ac0e16376f3370f7f5f2cb359ad016f1d136f",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/scanners.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "95bfa2a04f5132898291517f56a0932c7c23f8ce0dffa89435d7248bf46cb2a4",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/stack.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "0b51f4ddad79d4a413bbe6d6e14d3629477b01b9584327094f985ed0193c0af2",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/validate.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "9cf3ec500821ed796c062358d78a76d494412ca8c6c4455f4dc729b7bef91b32",
+      "id": "SC8",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/wpvulns.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "e0886b8fe03bdad11081197c09c6b4b72daad5ad74b646f9e50c53076c9f4c1f",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/__init__.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "161d33d2c1a518221b13b970de2bbf3f7bf67ae579870a741fef7e7627a7b6bd",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/benchmark.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "6ab70ad567d3cd98ac822dbd995a18ebed418a95021c86d6747a5a8f33bc9f65",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/common.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "0cf0cf92a8ac9837816406a190254cd4d1d5767d0ef751060661f14ff6419b2d",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/exposed.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "9b751bc9875c8319104b47c65819e65be241c386e640540db9878446bad32276",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/normalize.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "5211dbb328ccb911b6df0c6a86946ebb0e08233892fc4bf83476d3fcea301d7c",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/pii.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "6f55b637ae01ca32cef5e4fcdb4c6a8d986ef5c4072f10d7f5b796d43d082b2d",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/report_docx.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "9fcc359b25e3c0333a9d162b62da57524e5cd6d2db0cfdf91336dd034930a1cf",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/scanners.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "77a3a75f7e5dfc0c5faeeeb625f25089ffca2753e699368c0d92ff92e58185ba",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/stack.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "add04c5aa9b92a7fbb35a22e23202637836c774be3f1d9d06f36efa8e84fe4a7",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/validate.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "000bc0fa67ef1327b180d37e5ccd20efaa91d873312617e90528785db632356c",
+      "id": "SC9",
+      "severity": "HIGH",
+      "category": "Supply Chain",
+      "file": "scripts/aisa_lib/__pycache__/wpvulns.cpython-314.pyc"
+    },
+    {
+      "fingerprint": "d61ab72824eae3143803cfed4f723d8454fedefdac1d6ad5c7f4299f9032a6ee",
+      "id": "SSRF1",
+      "severity": "HIGH",
+      "category": "Server-Side Request Forgery",
+      "file": "checklists/cloud-and-deployment.md"
+    },
+    {
+      "fingerprint": "628815e490cc42c38af4f44f4927d10f2a63a73dfe75c8399825a110c480b04c",
+      "id": "SSRF1",
+      "severity": "HIGH",
+      "category": "Server-Side Request Forgery",
+      "file": "checklists/cloud-and-deployment.md"
+    },
+    {
+      "fingerprint": "17ab375f63f3f398f1955b01229dd1421528cfb609daf9b94ed7a92414094a0c",
+      "id": "TM4",
+      "severity": "HIGH",
+      "category": "Tool Misuse",
+      "file": "checklists/cloud-and-deployment.md"
+    },
+    {
+      "fingerprint": "e7e5d32c53ab266bb72dd3ae6b0ccccc2936d316f9f2f34669c11429636f8d46",
+      "id": "YR4",
+      "severity": "HIGH",
+      "category": "YARA Match",
+      "file": "checklists/vibe-coded/ai-integration.md"
+    }
+  ]
+}

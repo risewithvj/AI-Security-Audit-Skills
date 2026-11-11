@@ -1,0 +1,14 @@
+{
+  "name": "vuln-hr-portal",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Test fixture for AI-Security-Audit-Skills (Vijaya Kumar L, github.com/risewithvj). Deliberately vulnerable. Never deploy.",
+  "dependencies": {
+    "express": "4.17.1",
+    "jsonwebtoken": "8.5.1",
+    "lodash": "4.17.15",
+    "pg": "8.7.1",
+    "stripe": "14.0.0",
+    "@supabase/supabase-js": "2.39.0"
+  }
+}

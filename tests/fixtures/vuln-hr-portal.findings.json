@@ -1,0 +1,391 @@
+{
+  "$comment": "AI-Security-Audit-Skills example findings | Author: Vijaya Kumar L (Rise With VJ) | https://github.com/risewithvj | https://www.linkedin.com/in/vijayakumarl/ | MIT",
+  "schema_version": "1.0",
+  "run_id": "vuln-hr-portal-example",
+  "framework": "security",
+  "generated_at": "2026-11-10T13:00:00+05:30",
+  "overall_risk": "Critical",
+  "findings": [
+    {
+      "id": "F-01",
+      "verdict": "confirmed",
+      "title": "Any logged-in employee can download any other employee's payslip",
+      "class": "Broken Access Control (IDOR)",
+      "location": "GET /api/payslips/:employeeId/:month (src/routes/payslips.js:6-10)",
+      "plain": {
+        "what_this_is": "The payslip download API returns a salary slip for the employee ID in the URL.",
+        "problem": "It never checks that the ID belongs to the person who is logged in, so any employee can change the number and get anyone's payslip.",
+        "fix": "Use the logged-in user's ID from the token instead of the ID in the URL, or check that they match before reading the database.",
+        "if_we_skip": "Every employee's salary, bank account and PAN can be read by any colleague, which is a reportable personal data breach."
+      },
+      "description": "The route takes employeeId from the URL path and passes it straight to the payslips query. The only control on the path is requireLogin, which proves the caller is logged in but does not tie the requested employee to the caller. There is no ownership, manager or HR role check anywhere between the route and the query.",
+      "attacker": "Any employee with a valid login",
+      "control": "employeeId path parameter",
+      "intended_rule": "An employee may read only their own payslips; HR may read all",
+      "trace": [
+        {
+          "file": "src/server.js",
+          "line": 11,
+          "snippet": "app.use('/api/payslips', requireLogin, payslips);",
+          "note": "only authentication is applied"
+        },
+        {
+          "file": "src/routes/payslips.js",
+          "line": 7,
+          "snippet": "const { employeeId, month } = req.params;",
+          "note": "attacker-controlled id"
+        },
+        {
+          "file": "src/routes/payslips.js",
+          "line": 8,
+          "snippet": "const result = await db.query('SELECT pdf, net_pay, bank_account_no, pan FROM payslips WHERE employee_id = $1 AND month = $2', [employeeId, month]);",
+          "note": "no comparison with req.user before the query"
+        },
+        {
+          "file": "src/routes/payslips.js",
+          "line": 10,
+          "snippet": "res.json(result.rows[0] || {});",
+          "note": "another employee's payslip, net pay, bank account and PAN returned"
+        }
+      ],
+      "missing_check": "No comparison of req.user.id (or an HR role) with employeeId before db.query at src/routes/payslips.js:8",
+      "result": "Returns another employee's payslip PDF, net pay, bank account number and PAN.",
+      "cwe": [
+        "CWE-639",
+        "CWE-862"
+      ],
+      "owasp": [
+        "A01:2025",
+        "API1:2023"
+      ],
+      "severity": "Critical",
+      "severity_rationale": "Any employee can read every employee's salary, bank account and PAN (high-sensitivity personal data at company-wide scale).",
+      "cvss": {
+        "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
+        "score": 7.1
+      },
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Exposes salary, bank and tax identity data of all employees to every employee. This is a personal data breach under the DPDP Act 2023 and creates fraud risk (bank details) and serious employee-relations damage.",
+      "root_cause": "Authorization is treated as authentication: the router applies requireLogin but no per-object rule, and the query trusts the client-supplied employee ID.",
+      "recommendation": {
+        "summary": "Scope the query by the logged-in identity. Allow other IDs only for users with an HR role, checked on the server.",
+        "code_example": "const { employeeId, month } = req.params;\nif (String(employeeId) !== String(req.user.id) && req.user.role !== 'hr') {\n  return res.status(404).end();\n}",
+        "files_to_change": [
+          "src/routes/payslips.js"
+        ],
+        "production_risk": "Low. HR tools that call this route for other employees must send a token with the hr role; check those callers before release."
+      },
+      "regression_test": "Log in as employee A, request /api/payslips/<B's id>/2026-10, expect 404. Log in as HR, expect 200.",
+      "regulation": [
+        "DPDP Act 2023 Section 8(5) reasonable security safeguards",
+        "IT Act 2000 Section 43A"
+      ],
+      "ledger_units": [
+        "GET /api/payslips/:employeeId/:month::own-payslips-only::Access control"
+      ]
+    },
+    {
+      "id": "F-02",
+      "verdict": "confirmed",
+      "title": "Supabase service-role key is shipped to every browser through a public env variable",
+      "class": "Secrets exposure / client-side trust",
+      "location": "web/supabaseClient.js:6",
+      "plain": {
+        "what_this_is": "The web app creates its database client in browser code.",
+        "problem": "It uses the service-role key, which skips all database security rules, through a NEXT_PUBLIC_ variable that Next.js copies into the JavaScript every visitor downloads.",
+        "fix": "Use the anon key in the browser and keep the service-role key only in server code. Rotate the exposed key.",
+        "if_we_skip": "Anyone can open the browser tools, copy the key and read or delete every row in the database."
+      },
+      "description": "createClient in web/supabaseClient.js is called with NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY. Variables with the NEXT_PUBLIC_ prefix are inlined into the client bundle at build time. This file is the only Supabase client in the repository and no anon key is referenced anywhere, so the browser client can only work when this variable is set to the service-role key.",
+      "attacker": "Any anonymous visitor of the web app",
+      "control": "Reads the key from the public JavaScript bundle",
+      "intended_rule": "Only trusted server code may hold the service-role key",
+      "trace": [
+        {
+          "file": "web/supabaseClient.js",
+          "line": 4,
+          "snippet": "export const supabase = createClient(",
+          "note": "browser-side client"
+        },
+        {
+          "file": "web/supabaseClient.js",
+          "line": 6,
+          "snippet": "process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY",
+          "note": "service-role key via a public prefix"
+        }
+      ],
+      "missing_check": "Server-only secret routed through a client-exposed env prefix",
+      "result": "Full read and write access to the database, bypassing every Row Level Security policy.",
+      "cwe": [
+        "CWE-200",
+        "CWE-798"
+      ],
+      "owasp": [
+        "A02:2025",
+        "A01:2025"
+      ],
+      "severity": "Critical",
+      "cvss": {
+        "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+        "score": 9.3
+      },
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Complete loss of confidentiality and integrity of all application data, including employee PII.",
+      "root_cause": "A server credential was given a client-exposed variable name.",
+      "recommendation": {
+        "summary": "Switch the browser client to NEXT_PUBLIC_SUPABASE_ANON_KEY, move privileged calls to server routes using a non-public SUPABASE_SERVICE_ROLE_KEY, and rotate the service-role key in the Supabase dashboard.",
+        "code_example": "export const supabase = createClient(\n  process.env.NEXT_PUBLIC_SUPABASE_URL,\n  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY\n);",
+        "files_to_change": [
+          "web/supabaseClient.js"
+        ],
+        "production_risk": "Medium. Browser features that relied on bypassing RLS will fail until RLS policies exist for them; review and add policies before switching keys."
+      },
+      "regression_test": "Build the web app and search the output bundle for the service-role key prefix; the build must fail if it is found.",
+      "regulation": [
+        "DPDP Act 2023 Section 8(5) reasonable security safeguards"
+      ]
+    },
+    {
+      "id": "F-03",
+      "verdict": "confirmed",
+      "title": "SQL injection in employee search lets any user read and change other organisations' data",
+      "class": "Injection (SQL)",
+      "location": "GET /api/search?q= (src/routes/search.js:7)",
+      "plain": {
+        "what_this_is": "The employee search builds its SQL query by gluing the search text into the query string.",
+        "problem": "A user can type SQL instead of a name and the database runs it.",
+        "fix": "Pass the search text as a bound parameter ($1) instead of joining strings.",
+        "if_we_skip": "Any logged-in user can read every organisation's employees and change or delete records."
+      },
+      "description": "req.query.q is concatenated into the SQL text and executed with db.query without parameters. The org_id filter in the same string is defeated by the injection, so tenant isolation does not hold.",
+      "attacker": "Any logged-in user of any organisation",
+      "control": "q query-string parameter",
+      "intended_rule": "Search returns only employees of the caller's organisation and cannot alter data",
+      "trace": [
+        {
+          "file": "src/server.js",
+          "line": 12,
+          "snippet": "app.use('/api/search', requireLogin, search);",
+          "note": "authenticated route"
+        },
+        {
+          "file": "src/routes/search.js",
+          "line": 6,
+          "snippet": "const q = req.query.q || '';",
+          "note": "attacker-controlled"
+        },
+        {
+          "file": "src/routes/search.js",
+          "line": 7,
+          "snippet": "const rows = await db.query(\"SELECT id, name, department FROM employees WHERE org_id = \" + req.user.orgId + \" AND name LIKE '%\" + q + \"%'\");",
+          "note": "string concatenation into SQL"
+        }
+      ],
+      "missing_check": "No parameter binding or escaping of q",
+      "result": "Arbitrary SQL runs with the application's database privileges, including reads across organisations.",
+      "cwe": [
+        "CWE-89"
+      ],
+      "owasp": [
+        "A05:2025"
+      ],
+      "severity": "High",
+      "cvss": {
+        "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+        "score": 8.7
+      },
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Cross-tenant data exposure and tampering in a multi-company HR system.",
+      "root_cause": "Query built by string concatenation instead of parameters.",
+      "recommendation": {
+        "summary": "Use a parameterised query for both the organisation and the search text.",
+        "code_example": "const rows = await db.query(\n  'SELECT id, name, department FROM employees WHERE org_id = $1 AND name ILIKE $2',\n  [req.user.orgId, `%${q}%`]\n);",
+        "files_to_change": [
+          "src/routes/search.js"
+        ],
+        "production_risk": "Low. Same results for normal input; ILIKE changes case sensitivity, use LIKE to keep current behaviour."
+      },
+      "regression_test": "Call /api/search?q=%' OR '1'='1 and assert only the caller's organisation's rows are returned.",
+      "regulation": [
+        "DPDP Act 2023 Section 8(5) reasonable security safeguards"
+      ]
+    },
+    {
+      "id": "F-04",
+      "verdict": "confirmed",
+      "title": "Checkout charges whatever amount the browser sends",
+      "class": "Business logic / payment tampering",
+      "location": "POST /api/checkout (src/routes/checkout.js:10)",
+      "plain": {
+        "what_this_is": "The checkout API creates a Stripe payment for training seats.",
+        "problem": "It takes the price from the request body, so a user can set it to one rupee.",
+        "fix": "Look up the seat price on the server or use a fixed Stripe Price ID.",
+        "if_we_skip": "Customers can buy seats for almost nothing."
+      },
+      "description": "unit_amount is set from req.body.amount with no server-side price lookup or validation.",
+      "attacker": "Any logged-in customer",
+      "control": "amount field in the JSON body",
+      "intended_rule": "Price is set by the server catalogue",
+      "trace": [
+        {
+          "file": "src/server.js",
+          "line": 13,
+          "snippet": "app.use('/api/checkout', requireLogin, checkout);",
+          "note": "authenticated route"
+        },
+        {
+          "file": "src/routes/checkout.js",
+          "line": 10,
+          "snippet": "line_items: [{ price_data: { currency: 'inr', unit_amount: req.body.amount, product_data: { name: 'Training seats' } }, quantity: 1 }],",
+          "note": "client-supplied amount"
+        }
+      ],
+      "missing_check": "No server-side price lookup",
+      "result": "A paid checkout session for any amount the client chooses.",
+      "cwe": [
+        "CWE-602",
+        "CWE-840"
+      ],
+      "owasp": [
+        "A06:2025",
+        "API6:2023"
+      ],
+      "severity": "High",
+      "cvss": {
+        "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N",
+        "score": 7.1
+      },
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Direct revenue loss on every tampered order.",
+      "root_cause": "Trusting a client-side value for a server-side business rule.",
+      "recommendation": {
+        "summary": "Replace price_data with a server-defined Stripe Price ID or a price looked up from the catalogue by product ID.",
+        "code_example": "line_items: [{ price: process.env.STRIPE_SEAT_PRICE_ID, quantity: Number(req.body.quantity) || 1 }],",
+        "files_to_change": [
+          "src/routes/checkout.js"
+        ],
+        "production_risk": "Low. The frontend must stop sending amount; it can keep sending quantity."
+      },
+      "regression_test": "POST /api/checkout with amount=1 and assert the created session total equals the catalogue price.",
+      "regulation": []
+    },
+    {
+      "id": "F-05",
+      "verdict": "confirmed",
+      "title": "Employee PAN is written to application logs on every payslip download",
+      "class": "Sensitive data in logs",
+      "location": "src/routes/payslips.js:9",
+      "plain": {
+        "what_this_is": "The payslip route writes a log line each time a payslip is served.",
+        "problem": "The log line includes the employee's PAN.",
+        "fix": "Remove PAN from the log line; log the employee ID and request ID only.",
+        "if_we_skip": "Anyone with log access (developers, log tools, support vendors) can collect PAN numbers."
+      },
+      "description": "console.log includes result.rows[0].pan. Logs are retained and readable by more people and systems than the payslips table.",
+      "attacker": "Anyone with read access to application logs or the log platform",
+      "control": "Reads logs",
+      "intended_rule": "PAN is visible only to the employee and HR",
+      "trace": [
+        {
+          "file": "src/routes/payslips.js",
+          "line": 9,
+          "snippet": "console.log('payslip served', { employeeId, pan: result.rows[0] && result.rows[0].pan });",
+          "note": "PAN in log"
+        }
+      ],
+      "missing_check": "No redaction of personal identifiers in logs",
+      "result": "PAN numbers accumulate in logs outside the access controls of the HR system.",
+      "cwe": [
+        "CWE-532"
+      ],
+      "owasp": [
+        "A09:2025"
+      ],
+      "severity": "Medium",
+      "cvss": {
+        "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+        "score": 5.3
+      },
+      "confidence": "High",
+      "votes": {
+        "confirmed": 3,
+        "needs_validation": 0,
+        "rejected": 0
+      },
+      "business_impact": "Widens who can see tax identifiers and lengthens how long they are kept.",
+      "root_cause": "Debug logging left in a production route.",
+      "recommendation": {
+        "summary": "Delete the pan field from the log call.",
+        "code_example": "console.log('payslip served', { employeeId });",
+        "files_to_change": [
+          "src/routes/payslips.js"
+        ],
+        "production_risk": "None. Logging only."
+      },
+      "regression_test": "Unit test the route with a stub logger and assert no logged value matches the PAN format.",
+      "regulation": [
+        "DPDP Act 2023 Section 8(5) reasonable security safeguards"
+      ]
+    },
+    {
+      "id": "V-01",
+      "verdict": "needs_validation",
+      "title": "Login tokens can be forged if JWT_SECRET is not set in production",
+      "class": "Insecure default / authentication",
+      "location": "src/lib/auth.js:4",
+      "description": "The JWT signing secret falls back to the literal 'secret' when JWT_SECRET is missing. The app starts normally without it, so a missing variable is silent.",
+      "trace": [
+        {
+          "file": "src/lib/auth.js",
+          "line": 4,
+          "snippet": "const JWT_SECRET = process.env.JWT_SECRET || 'secret';",
+          "note": "fallback secret"
+        },
+        {
+          "file": "src/lib/auth.js",
+          "line": 9,
+          "snippet": "req.user = jwt.verify(token, JWT_SECRET);",
+          "note": "used for every login check"
+        }
+      ],
+      "missing_fact": "Whether JWT_SECRET is set to a strong value in every production and staging environment.",
+      "why_verification": "The environment configuration is not in the repository.",
+      "safe_check": "Ask the platform owner to confirm JWT_SECRET is set (length only, never the value) in each environment. Regardless of the answer, remove the fallback so startup fails when it is missing.",
+      "potential_impact": "If unset, anyone can sign a token for any user ID, including HR or admin, and take over any account.",
+      "cwe": [
+        "CWE-798",
+        "CWE-1188"
+      ],
+      "owasp": [
+        "A07:2025"
+      ]
+    },
+    {
+      "id": "R-01",
+      "verdict": "rejected",
+      "title": "Checkout endpoint lacks CSRF protection",
+      "class": "CSRF",
+      "reason": "Authentication uses a Bearer token in the Authorization header (src/lib/auth.js:7), not cookies, so a cross-site request cannot carry the user's credentials. False-positive pattern 12."
+    }
+  ]
+}
