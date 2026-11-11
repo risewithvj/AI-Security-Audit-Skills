@@ -1,0 +1,27 @@
+# AI-Security-Audit-Skills | Vijaya Kumar L (Rise With VJ) | github.com/risewithvj | MIT
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Audit output (never commit a client's findings)
+ai-security-audit-reports/
+audit-output/
+*.findings.json
+!tests/fixtures/**/*.findings.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ai-security-audit-skills",
+  "description": "Proof-backed AI security audit and DPDP Act skills by Rise With VJ.",
+  "owner": {
+    "name": "Vijaya Kumar L (Rise With VJ)",
+    "url": "https://github.com/risewithvj"
+  },
+  "plugins": [
+    {
+      "name": "ai-security-audit-skills",
+      "description": "/ai-security-audit for a full source-code security audit and /ai-dpdp-audit for an India DPDP Act 2023 scan. Recommendations only.",
+      "source": "./",
+      "category": "security"
+    }
+  ]
+}

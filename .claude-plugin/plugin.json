@@ -1,0 +1,13 @@
+{
+  "name": "ai-security-audit-skills",
+  "version": "1.4.0",
+  "description": "Proof-backed AI security audit and DPDP Act skills for Claude Code. Source-code VAPT with zero unproven findings, recommendations only, never touches your code.",
+  "author": {
+    "name": "Vijaya Kumar L (Rise With VJ)",
+    "url": "https://github.com/risewithvj"
+  },
+  "homepage": "https://github.com/risewithvj/AI-Security-Audit-Skills",
+  "repository": "https://github.com/risewithvj/AI-Security-Audit-Skills",
+  "license": "MIT",
+  "keywords": ["security-audit", "vapt", "appsec", "owasp", "sast", "vibe-coding", "dpdp", "claude-code", "agent-skills"]
+}
