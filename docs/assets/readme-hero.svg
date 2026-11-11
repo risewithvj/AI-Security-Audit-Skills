@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 340" role="img" aria-label="AI-Security-Audit-Skills — proof-backed security and DPDP audits, one prompt any AI">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0b0c"/><stop offset="1" stop-color="#121214"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="-0.1" r="0.7">
+      <stop offset="0" stop-color="#FF2A1F" stop-opacity="0.28"/><stop offset="1" stop-color="#FF2A1F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="340" rx="18" fill="url(#bg)"/>
+  <rect width="1280" height="340" rx="18" fill="url(#glow)"/>
+  <g transform="translate(64,54)">
+    <g transform="translate(0,0)">
+      <path d="M22 0l20 8v14c0 12-8.4 20-20 25C10 42 2 34 2 22V8z" fill="none" stroke="#FF2A1F" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M12 23l6.8 6.8L34 18" fill="none" stroke="#FF2A1F" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="60" y="26" font-family="Segoe UI,Arial,sans-serif" font-size="19" letter-spacing="5" fill="#A8A8A8">RISE WITH <tspan fill="#FF2A1F" font-weight="700">VJ</tspan></text>
+  </g>
+  <text x="62" y="170" font-family="Segoe UI,Arial,sans-serif" font-size="58" font-weight="800" fill="#F5F5F5" letter-spacing="-1">AI Security + DPDP Audit</text>
+  <text x="62" y="228" font-family="Segoe UI,Arial,sans-serif" font-size="40" font-weight="800" fill="#FF2A1F" letter-spacing="-0.5">one prompt, any AI &#8212; or a Claude Code CLI</text>
+  <text x="64" y="270" font-family="Segoe UI,Arial,sans-serif" font-size="20" fill="#C2C2C2">Proof-backed source-code review. Every finding carries a file and a line. Recommendations only.</text>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="19" font-weight="600">
+    <g transform="translate(64,296)"><rect width="168" height="34" rx="17" fill="#17171a" stroke="#2a2a2e"/><text x="18" y="23" fill="#F5F5F5"><tspan fill="#FF2A1F" font-weight="700">Core 25/30</tspan> (CLI)</text></g>
+    <g transform="translate(248,296)"><rect width="176" height="34" rx="17" fill="#17171a" stroke="#2a2a2e"/><text x="18" y="23" fill="#F5F5F5"><tspan fill="#FF2A1F" font-weight="700">0</tspan> false positives</text></g>
+    <g transform="translate(440,296)"><rect width="150" height="34" rx="17" fill="#17171a" stroke="#2a2a2e"/><text x="18" y="23" fill="#F5F5F5"><tspan fill="#FF2A1F" font-weight="700">4</tspan> AIs tested</text></g>
+    <g transform="translate(606,296)"><rect width="128" height="34" rx="17" fill="#17171a" stroke="#2a2a2e"/><text x="18" y="23" fill="#F5F5F5"><tspan fill="#FF2A1F" font-weight="700">MIT</tspan> licensed</text></g>
+  </g>
+</svg>
