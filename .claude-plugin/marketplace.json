@@ -9,6 +9,7 @@
   "plugins": [
     {
       "name": "ai-security-audit-skills",
+      "version": "1.7.0",
       "description": "/ai-security-audit for a full source-code security audit and /ai-dpdp-audit for an India DPDP Act 2023 scan. Recommendations only.",
       "source": "./",
       "category": "security"

@@ -8,6 +8,16 @@
 
 # Changelog
 
+## 1.7.0 (2026-11-11)
+
+New landing page and a version sync across the plugin, marketplace and skills. No change to the audit engine's evidence bar or the v1.5.1 benchmark numbers.
+
+- **New landing page** (`docs/index.html` + `docs/assets/landing.css` + `landing.js`): a **prompt studio** that renders all 11 stacks × Lite/Pro/God/Deep-4-pass with Copy and Download-`.txt`; a dedicated **DPDP section**; a **roadmap**; an in-page **report viewer** (lightbox) for the security and DPDP sample reports; a **Docs** dropdown menu; sticky header with scroll-spy, live star count, dark/light. Keeps the existing `prompts-embed.js`, `analytics.js` (GTM + Consent Mode v2) and `site-config.json` unchanged. Dropped the now-unused `assets/site.css` / `assets/site.js`.
+- **Report viewer assets** under `docs/reports/` (WebP previews + thumbnails + the two sample PDFs); the PDFs are now listed in `sitemap.xml`.
+- **Versions synced to 1.7.0** across `.claude-plugin/plugin.json` (was stale at 1.5.1), `.claude-plugin/marketplace.json`, both `SKILL.md` files, the engine, and the web prompt catalogue.
+- **README** reordered to match the site (How it works → Prompts → DPDP → Benchmark → Sample reports → CLI install → Roadmap → FAQ), using the `docs/reports` WebP previews.
+- Fixed a ~18 px mobile header overflow (Star button hidden ≤560 px) — no horizontal scroll at 390 px or 1440 px.
+
 ## 1.6.0 (2026-11-11)
 
 Landing-page redesign, live analytics, a new README, and HD imagery. No change to the audit engine's evidence bar or the v1.5.1 benchmark numbers.
