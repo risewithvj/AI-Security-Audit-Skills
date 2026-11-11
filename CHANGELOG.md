@@ -8,6 +8,17 @@
 
 # Changelog
 
+## 1.6.0 (2026-11-11)
+
+Landing-page redesign, live analytics, a new README, and HD imagery. No change to the audit engine's evidence bar or the v1.5.1 benchmark numbers.
+
+- **Landing page rebuilt** (`docs/index.html` + `docs/assets/site.css` + `site.js`): sticky nav with a live GitHub star count and a "Report an issue" button; a hero with three real-result stat cards (Core 25/30, 0 false positives on Juice Shop, 4 AIs tested); a 3-step "How it works"; a tabbed **prompt picker** (Lite / Pro / God / Deep 4-pass) that renders every prompt on load with one-click "Copied ✓"; a "Which AI works best" table; CLI install commands with copy; a resources grid; and an FAQ. Dark/light toggle, mobile-first, keyboard-accessible. Lighthouse **Performance 99, Accessibility 100, Best-Practices 100, SEO 100**.
+- **SEO & sharing:** canonical URL, Open Graph + Twitter tags with a 1200×630 OG image, JSON-LD `SoftwareApplication`, SVG favicon set, `sitemap.xml` and `robots.txt`.
+- **Analytics (on, privacy-first):** Google Tag Manager (`GTM-W488FK5H`) loaded only through `docs/analytics.js` on every page under `docs/`, with **Consent Mode v2** (all storage denied by default; Accept grants analytics only, ads stay denied; choice remembered). `dataLayer` events for `prompt_copy` (mode/type), `install_copy`, `scorecard_open`, `pdf_download`, `github_click`, `issue_click`. Switch/disable via `docs/site-config.json`; full GTM setup in `docs/ANALYTICS.md`.
+- **README redesign:** SVG hero banner, badge row (release, CI, license, stars, Pages), collapsible Web-AI and CLI quick-starts, the Core-30 benchmark table, a Mermaid flow, HD report previews, FAQ and roadmap.
+- **HD images:** regenerated the OWASP Juice Shop **sample report with the v1.5.1 engine** (34 pages), rendered report pages to PNG at 200 DPI, captured landing + scorecard screenshots at 2× (PNG + WebP), and removed the old blurry preview.
+- **GitHub polish:** issue forms (bug, false positive, feature, new-stack), a PR template, Discussions enabled, repo description/homepage/topics refreshed, and a 1280×640 social preview (`docs/social-preview.png`).
+
 ## 1.5.1 (2026-11-11)
 
 Defensive framing, a 4-pass deep pack, and a published web-AI scorecard.

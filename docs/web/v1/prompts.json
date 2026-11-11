@@ -1,6 +1,6 @@
 {
   "_comment": "Prompts for the no-install web audit. Every TYPE has all three MODES; plus an all-in-one God Mode prompt and a Deep (4-pass) pack run one after another in the same chat. Every prompt opens with the ownership/defensive-review line.",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "runbook": "https://risewithvj.github.io/AI-Security-Audit-Skills/web/v1/runbook.md",
   "raw_fallback": "https://raw.githubusercontent.com/risewithvj/AI-Security-Audit-Skills/main/docs/web/v1/runbook.md",
   "engine": "https://raw.githubusercontent.com/risewithvj/AI-Security-Audit-Skills/main/docs/web/v1/aisa_web.py",

@@ -1,6 +1,6 @@
 /* AUTO-GENERATED from docs/web/v1/prompts.json — run docs/build_prompts_embed.py. Do not edit by hand. */
 window.AISA_PROMPTS = {
-"version": "1.5.1",
+"version": "1.6.0",
 "modes": [
 "lite",
 "pro",
